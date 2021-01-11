@@ -9,4 +9,5 @@ export {
   zkSnarkCircuitProviderServiceFactory,
   zkSnarkCircuitProviderServiceProvide,
   zkSnarkCircuitProviderServiceZokrates,
+  zkSnarkCircuitProviderServiceZokratesCliWrapper
 } from './zkp';

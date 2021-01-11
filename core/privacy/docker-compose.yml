@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  zokrates-cli-wrapper:
+    build:
+      context: ./
+      dockerfile: ./ops/zokrates-cli-wrapper.Dockerfile
+    restart: on-failure
+    volumes:
+      - ../../lib:/app/lib:delegated
+      - ./src:/app/src:delegated
+      - ./test:/app/test:delegated
+    command: tail -F /dev/null

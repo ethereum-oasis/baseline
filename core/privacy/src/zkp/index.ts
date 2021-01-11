@@ -1,10 +1,12 @@
 import { Circuit } from '@baseline-protocol/types';
 import { provideServiceFactory } from './provide';
 import { zokratesServiceFactory } from './zokrates';
+import { zokratesCliWrapperServiceFactory } from './zokrates-cli-wrapper';
 import { VerificationKey } from 'zokrates-js';
 
 export const zkSnarkCircuitProviderServiceProvide = 'provide';
 export const zkSnarkCircuitProviderServiceZokrates = 'zokrates';
+export const zkSnarkCircuitProviderServiceZokratesCliWrapper = 'zokrates-cli-wrapper';
 
 export interface ICircuitProver {
   prove(circuitId: any, params: any): Promise<any>;
@@ -61,6 +63,9 @@ export async function zkSnarkCircuitProviderServiceFactory(
       break;
     case zkSnarkCircuitProviderServiceZokrates:
       service = await zokratesServiceFactory(config);
+      break;
+    case zkSnarkCircuitProviderServiceZokratesCliWrapper:
+      service = await zokratesCliWrapperServiceFactory(config);
       break;
     default:
       throw new Error('zkSnark circuit provider service required');

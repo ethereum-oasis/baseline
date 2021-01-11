@@ -1,11 +1,15 @@
 import "signatures/verifyEddsa" as verifyEddsa
 import "ecc/babyjubjubParams" as context
 from "ecc/babyjubjubParams" import BabyJubJubParams
-from "./createAgreement" import Agreement
 
 struct Signature {
   field[2] R
   field S
+}
+
+struct Agreement {
+  u32[8] hash
+  field[2] senderPublicKey
 }
 
 // Receive a rawAgreement object, and verift its signature
