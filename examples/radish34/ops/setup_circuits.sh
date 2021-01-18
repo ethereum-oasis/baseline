@@ -8,7 +8,7 @@ NC='\033[0m'
 
 printf "\nSetting up circuits within ZKP service.\n"
 
-docker-compose -f docker-compose.yml -f config/docker-compose.tmp.yml up --no-recreate -d zkp
+npm run compose:up -- -d --no-recreate zkp
 ./ops/await_stack.sh
 
 if [ "$1" = "" ]; then

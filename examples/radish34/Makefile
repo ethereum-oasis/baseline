@@ -19,8 +19,10 @@ build-containers: build
 	npm run dockerize && \
 	popd
 
-clean: stop
-	@$(radish34)/ops/clean_npm.sh
+clean:
+	@pushd ${radish34} && \
+	npm run clean && \
+	popd
 
 contracts:
 	@pushd ${radish34} && \
@@ -39,7 +41,7 @@ install-config:
 
 npm-install:
 	@pushd ${radish34} && \
-	npm run build && \
+	npm run build:install && \
 	popd
 
 dev-env:
@@ -54,27 +56,19 @@ prod-env:
 
 start: start-dev
 
-start-dev: system-check install-config build-containers dev-env
+start-dev:
 	@pushd ${radish34} && \
-	npm run deploy && \
-	docker-compose -f docker-compose.yml -f config/docker-compose.tmp.yml up -d api-buyer api-supplier1 api-supplier2 ui && \
+	npm run start:dev && \
 	popd
 
-start-prod: system-check install-config build-containers prod-env
+start-prod:
 	@pushd ${radish34} && \
-	npm run deploy && \
-	docker-compose -f docker-compose.yml -f config/docker-compose.tmp.yml up -d api-buyer api-supplier1 api-supplier2 ui && \
+	npm run start:prod && \
 	popd
 
 stop:
 	@pushd ${radish34} && \
-	docker-compose down --remove-orphans && \
-	docker network rm \
-		radish34_network-buyer \
-		radish34_network-supplier1 \
-		radish34_network-supplier2 \
-		radish34_geth || true && \
-	docker volume rm radish34_mongo-merkle-tree-volume || true && \
+	npm run stop && \
 	popd
 
 system-check:
@@ -82,39 +76,22 @@ system-check:
 	npm run --silent system-check && \
 	popd
 
-reset: stop
+reset:
 	@pushd ${radish34} && \
-	docker container prune -f && \
-	docker volume rm \
-		radish34_mongo-buyer \
-		radish34_mongo-supplier1 \
-		radish34_mongo-supplier2 \
-		radish34_mongo-merkle-tree-volume \
-		radish34_chaindata || true && \
-	docker image rm \
-		radish34_logger \
-		radish34_api-buyer \
-		radish34_api-supplier1 \
-		radish34_api-supplier2 \
-		radish34_deploy \
-		radish34_messenger-buyer \
-		radish34_messenger-supplier1 \
-		radish34_messenger-supplier2 || true && \
-	rm -rf ./config && \
-	rm -rf ./zkp/output && \
+	npm run destroy && \
 	popd
 
-restart: stop start
+restart:
+	@pushd ${radish34} && \
+	npm run restart && \
+	popd
 
 test:
 	@pushd ${radish34} && \
-	npm run await-stack && \
 	npm run test && \
 	popd
 
 zk-circuits:
 	@pushd ${radish34} && \
-	rm -rf ./zkp/output && \
-	mkdir -p ./zkp/output && \
-	npm run setup-circuits ${mode} && \
+	npm run zk-circuits ${mode} && \
 	popd

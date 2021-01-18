@@ -23,35 +23,39 @@ Just want to get the __Baseline Protocol__ running locally? The following sequen
 ```
 make && make start && make test
 ```
+or
+```
+npm run build && npm run start && npm run test
+```
 > Note: The file `./env.dev.env` contains environment variables that allow you to select between configurable options. For example, to speed up testing you can use "dummy" ZKP circuits (`createDummyMSA` and `createDummyPO`) instead of the `createMSA` and `createPO` by setting `BASELINE_ZKP_MODE="1"`. This shortens the integration test time significantly because the proof generation for the "dummy" circuits is trivial.
 
 ### The demo UI
 
-After running the above (`make test` optional) you can view the Radish34 demo by opening [http://localhost:3000](http://localhost:3000) in your browser.
+After running the above (`npm run test` optional) you can view the Radish34 demo by opening [http://localhost:3000](http://localhost:3000) in your browser.
 
-Here are the targets currently exposed by the `Makefile`:
+Here are the targets currently exposed by `Makefile` or `Npm`:
 
-- `make`: Alias for `make build`
-- `make build`: Build all modules within the monorepo.
-- `make build-containers`: Dockerize all modules within the monorepo.
-- `make clean`: Reclaim disk used by all modules (i.e. `node_modules/`) and the local docker environment. This effectively uninstalls your local __Baseline__ environment and will require building from scratch.
-- `make contracts`: Compile the Solidity contracts.
-- `make deploy-contracts`: Deploy the Solidity contracts. Requires the stack to be running.
-- `make npm-install`: `npm i` wrapper for all modules in the monorepo.
-- `make start`: Start the full __Baseline__ stack. Requires `docker` service to be running with at least 12 GB RAM allocation.
-- `make stop`: Stop the running __Baseline__ stack.
-- `make system-check`: Verify that `docker` is configured properly.
-- `make restart`: Stop and start the `docker` stack.
-- `make reset`: Clean the docker environment by pruning the docker networks and volumes.
-- `make test`: Run the full test suite. Requires the stack to be running.
-- `make zk-circuits`: Perform zk-SNARK trusted setups for circuits contained within `zkp/circuits`
+- `npm run build` `make`: Alias for `npm run build`
+- `npm run build` `make build`: Build all modules within the monorepo and compile contracts.
+- `npm run dockerize` `make build-containers`: Dockerize all modules within the monorepo.
+- `npm run clean` `make clean`: Reclaim disk used by all modules (i.e. `node_modules/`) and the local docker environment. This effectively uninstalls your local __Baseline__ environment and will require building from scratch.
+- `npm run build:contracts` `make contracts`: Compile the Solidity contracts.
+- `npm run deploy` `make deploy-contracts`: Deploy the Solidity contracts. Requires the stack to be running.
+- `npm run build:install` `make npm-install`: `npm i` wrapper for all modules in the monorepo.
+- `npm run start` `make start`: Start the full __Baseline__ stack. Requires `docker` service to be running with at least 12 GB RAM allocation.
+- `npm run stop` `make stop`: Stop the running __Baseline__ stack.
+- `npm run system-check` `make system-check`: Verify that `docker` is configured properly.
+- `npm run restart` `make restart`: Stop and start the `docker` stack.
+- `npm run destroy` `make reset`: Clean the docker environment by pruning the docker networks and volumes.
+- `npm run test` `make test`: Run the full test suite. Requires the stack to be running.
+- `npm run zk-circuits` `make zk-circuits`: Perform zk-SNARK trusted setups for circuits contained within `zkp/circuits`
 
 ## Detailed Setup
 
 The steps below illustrate the individual steps, that can be viewed as the breakdown of the `make` scripts.
 
 1. As part of the development environment, we assume a procurement use-case with three users: (1) buyer and (2) supplier organizations.
-2. Run `make npm-install`. ** This takes about 6 minutes to clean install npm packages in root and all sub directories **
+2. Run `npm run build:install`. ** This takes about 6 minutes to clean install npm packages in root and all sub directories **
 3. Run `docker-compose build` to create the latest versions of the docker containers. ** Only do this the first time or when service source code is changed **. ** This takes about 40 minutes for a fresh build **
 4. Run `npm run setup-circuits` to perform zk-SNARK trusted setups for the circuits that are contained in the `/zkp/circuits`. ** This takes about 5-10 minutes to complete ** 
     <details> 
