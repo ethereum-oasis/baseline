@@ -1,0 +1,29 @@
+{
+  "name": "baseline",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">   <img alt=\"Baseline\" src=\"docs/assets/baseline-logo/Web/examples/PNGs/horizontal/baselineHorizontal-Logo-FullColor.png\" />   <p>     Combining advances in cryptography, messaging, and blockchain to execute     <br/>     secure and private business processes via the public Ethereum Mainnet.   </p>   Read the full documentation <a href=\"https://docs.baseline-protocol.org\">here at docs.baseline-protocol.org</a>.   <p>     <em>Join our <a href=\"https://communityinviter.com/apps/ethereum-baseline/join-us\">Slack workspace</a>, <a href=\"https://discord.gg/NE8AYD7\">Discord channel</a>, <a href=\"https://t.me/baselineprotocol\">Telegram channel</a> and follow us on <a href=\"https://twitter.com/baselineproto\">Twitter</a> for Baseline news and updates!</em>   </p>   <br/> </div>",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "lib": "lib"
+  },
+  "dependencies": {
+    "ethlint": "^1.2.5",
+    "solium": "^1.2.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aadorian/baseline.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aadorian/baseline/issues"
+  },
+  "homepage": "https://github.com/aadorian/baseline#readme"
+}
