@@ -1,0 +1,58 @@
+{
+  "name": "base-example",
+  "version": "0.0.0",
+  "description": "Baseline Reference Implementation-1 using the core Provide stack",
+  "license": "CC0 1.0 Universal",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "unpkg": "./dist/umd/index.min.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:cjs": "./node_modules/.bin/tsc -p tsconfig.cjs.json",
+    "build:umd": "webpack",
+    "build": "npm run clean && npm run build:cjs && npm run build:umd",
+    "clean": "rm -rf ./dist",
+    "contracts:clean": "rm -rf ./artifacts && rm -rf node_modules/@baseline-protocol/contracts/artifacts",
+    "contracts:compile": "npm install && pushd node_modules/@baseline-protocol/contracts && npm install && make && popd && cp -r node_modules/@baseline-protocol/contracts/artifacts .",
+    "test": "npm run test:startup && sleep 5 && ./node_modules/.bin/mocha --require esm --require ts-node/register --require global-jsdom/lib/register test/**/*.spec.ts --timeout 940000 --trace-warnings --unhandled-rejections=strict --max-old-space-size=8192 && npm run test:teardown",
+    "test:startup": "make start",
+    "test:teardown": "make stop"
+  },
+  "dependencies": {
+    "@baseline-protocol/api": "0.2.0",
+    "@baseline-protocol/messaging": "0.1.0",
+    "@baseline-protocol/privacy": "0.2.0",
+    "@baseline-protocol/types": "0.1.0",
+    "js-sha256": "^0.9.0",
+    "js-sha3": "^0.8.0",
+    "jsonwebtoken": "8.5.1",
+    "loglevel": "^1.6.8",
+    "provide-js": "^1.3.5",
+    "solc": "^0.7.0",
+    "zokrates-js": "1.0.25"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.3.4",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^12.12.37",
+    "chai": "^4.2.0",
+    "esm": "^3.2.25",
+    "global-jsdom": "^6.1.0",
+    "jsdom": "^16.3.0",
+    "mocha": "^8.0.1",
+    "pg": "^8.3.3",
+    "ts-loader": "^6.0.4",
+    "ts-natsutil": "^1.1.1",
+    "ts-node": "^8.10.2",
+    "tslint": "5.20.1",
+    "tslint-config-airbnb": "5.11.2",
+    "tslint-config-prettier": "1.18.0",
+    "tslint-plugin-prettier": "2.0.1",
+    "typescript": "^3.9.6",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

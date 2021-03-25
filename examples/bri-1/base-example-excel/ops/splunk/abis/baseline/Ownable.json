@@ -1,0 +1,83 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "Ownable",
+	"abi": [
+		{
+			"inputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "previousOwner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "newOwner",
+					"type": "address"
+				}
+			],
+			"name": "OwnershipTransferred",
+			"type": "event"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "_owner",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "owner",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "newOwner",
+					"type": "address"
+				}
+			],
+			"name": "transferOwnership",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x608060405234801561001057600080fd5b506100203361002560201b60201c565b610068565b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b610381806100776000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80638da5cb5b14610046578063b2bdfa7b14610090578063f2fde38b146100da575b600080fd5b61004e61011e565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b610098610147565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b61011c600480360360208110156100f057600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919050505061016c565b005b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b61017461011e565b73ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16146101f7576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252602e81526020018061031f602e913960400191505060405180910390fd5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141561023157600080fd5b7f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e061025a61011e565b82604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390a16102d8816102db565b50565b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505056fe596f7520617265206e6f7420617574686f726973656420746f20696e766f6b6520746869732066756e6374696f6ea265627a7a7231582080802ec60f2867e9c7f610358730b90a082df823c17c3569666de6897240be6364736f6c63430005110032",
+	"sourceMap": "134:1332:13:-;;;783:52;8:9:-1;5:2;;;30:1;27;20:12;5:2;783:52:13;810:20;819:10;810:8;;;:20;;:::i;:::-;134:1332;;1052:73;1112:8;1103:6;;:17;;;;;;;;;;;;;;;;;;1052:73;:::o;134:1332::-;;;;;;;",
+	"source": "pragma solidity ^0.5.8;\n\n\n/**\n * @title Ownable\n * @dev This contract has the owner address providing basic authorization control\n */\ncontract Ownable {\n  /**\n   * @dev Event to show ownership has been transferred\n   * @param previousOwner representing the address of the previous owner\n   * @param newOwner representing the address of the new owner\n   */\n  event OwnershipTransferred(address previousOwner, address newOwner);\n\n  // Owner of the contract\n  address public _owner;\n\n  /**\n   * @dev Throws if called by any account other than the owner.\n   */\n  modifier onlyOwner() {\n    require(msg.sender == owner(), \"You are not authorised to invoke this function\");\n    _;\n  }\n\n  /**\n   * @dev The constructor sets the original owner of the contract to the sender account.\n   */\n  constructor() public {\n    setOwner(msg.sender);\n  }\n\n  /**\n   * @dev Tells the address of the owner\n   * @return the address of the owner\n   */\n  function owner() public view returns (address) {\n    return _owner;\n  }\n\n  /**\n   * @dev Sets a new owner address\n   */\n  function setOwner(address newOwner) internal {\n    _owner = newOwner;\n  }\n\n  /**\n   * @dev Allows the current owner to transfer control of the contract to a newOwner.\n   * @param newOwner The address to transfer ownership to.\n   */\n  function transferOwnership(address newOwner) public onlyOwner {\n    require(newOwner != address(0));\n    emit OwnershipTransferred(owner(), newOwner);\n    setOwner(newOwner);\n  }\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

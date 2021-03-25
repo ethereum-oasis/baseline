@@ -1,0 +1,280 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "Registrar",
+	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "ERC1820RegistryAddress",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "addr",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "interfaceHash",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "implementer",
+					"type": "address"
+				}
+			],
+			"name": "InterfaceImplementerSet",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "addr",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "newManager",
+					"type": "address"
+				}
+			],
+			"name": "ManagerChanged",
+			"type": "event"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_interfaceHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "getInterfaceImplementer",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				}
+			],
+			"name": "getManager",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contract",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes4",
+					"name": "_interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "implementsERC165Interface",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contract",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes4",
+					"name": "_interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "implementsERC165InterfaceNoCache",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "addr",
+					"type": "address"
+				},
+				{
+					"internalType": "string",
+					"name": "_interfaceLabel",
+					"type": "string"
+				}
+			],
+			"name": "interfaceAddr",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "_interfaceName",
+					"type": "string"
+				}
+			],
+			"name": "interfaceHash",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"payable": false,
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_interfaceHash",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_implementer",
+					"type": "address"
+				}
+			],
+			"name": "setInterfaceImplementer",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_newManager",
+					"type": "address"
+				}
+			],
+			"name": "setManager",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contract",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes4",
+					"name": "_interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "updateERC165Cache",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x608060405234801561001057600080fd5b5060405161136e38038061136e8339818101604052602081101561003357600080fd5b810190808051906020019092919050505080600360006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550506112d9806100956000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c806365ba36c11161006657806365ba36c1146102c7578063a41e7d5114610354578063aabbb8ca146103c1578063b70567651461044f578063f712f3e8146104d457610093565b806329965a1d146100985780633d58406314610106578063449a09a41461018a5780635df8122f14610263575b600080fd5b610104600480360360608110156100ae57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610559565b005b6101486004803603602081101561011c57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610995565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b610221600480360360408110156101a057600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001906401000000008111156101dd57600080fd5b8201836020820111156101ef57600080fd5b8035906020019184600183028401116401000000008311171561021157600080fd5b9091929391929390505050610a9a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6102c56004803603604081101561027957600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610bbb565b005b61033e600480360360208110156102dd57600080fd5b81019080803590602001906401000000008111156102fa57600080fd5b82018360208201111561030c57600080fd5b8035906020019184600183028401116401000000008311171561032e57600080fd5b9091929391929390505050610d7b565b6040518082815260200191505060405180910390f35b6103bf6004803603604081101561036a57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190929190505050610db5565b005b61040d600480360360408110156103d757600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610f23565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6104ba6004803603604081101561046557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190929190505050611011565b604051808215151515815260200191505060405180910390f35b61053f600480360360408110156104ea57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191690602001909291905050506110c6565b604051808215151515815260200191505060405180910390f35b60008073ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff16146105945783610596565b335b90503373ffffffffffffffffffffffffffffffffffffffff166105b882610995565b73ffffffffffffffffffffffffffffffffffffffff1614610641576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252600f8152602001807f4e6f7420746865206d616e61676572000000000000000000000000000000000081525060200191505060405180910390fd5b61064a8361123f565b156106bd576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601a8152602001807f4d757374206e6f7420626520616e20455243313635206861736800000000000081525060200191505060405180910390fd5b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff161415801561072657503373ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614155b156108a65760405160200180807f455243313832305f4143434550545f4d414749430000000000000000000000008152506014019050604051602081830303815290604052805190602001208273ffffffffffffffffffffffffffffffffffffffff1663249cb3fa85846040518363ffffffff1660e01b8152600401808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060206040518083038186803b1580156107f757600080fd5b505afa15801561080b573d6000803e3d6000fd5b505050506040513d602081101561082157600080fd5b8101908080519060200190929190505050146108a5576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260208152602001807f446f6573206e6f7420696d706c656d656e742074686520696e7465726661636581525060200191505060405180910390fd5b5b816000808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600085815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff16838273ffffffffffffffffffffffffffffffffffffffff167f93baa6efbd2244243bfee6ce4cfdd1d04fc4c0e9a786abd3a41313bd352db15360405160405180910390a450505050565b60008073ffffffffffffffffffffffffffffffffffffffff16600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161415610a3257819050610a95565b600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1690505b919050565b6000808383604051602001808383808284378083019250505092505050604051602081830303815290604052805190602001209050600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1663aabbb8ca86836040518363ffffffff1660e01b8152600401808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060206040518083038186803b158015610b7657600080fd5b505afa158015610b8a573d6000803e3d6000fd5b505050506040513d6020811015610ba057600080fd5b81019080805190602001909291905050509150509392505050565b3373ffffffffffffffffffffffffffffffffffffffff16610bdb83610995565b73ffffffffffffffffffffffffffffffffffffffff1614610c64576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252600f8152602001807f4e6f7420746865206d616e61676572000000000000000000000000000000000081525060200191505060405180910390fd5b8173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614610c9d5780610ca0565b60005b600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff167f605c2dbf762e5f7d60a546d42e7205dcb1b011ebc62a61736a57c9089d3a435060405160405180910390a35050565b6000828260405160200180838380828437808301925050509250505060405160208183030381529060405280519060200120905092915050565b610dbf8282611011565b610dca576000610dcc565b815b6000808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506001600260008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060006101000a81548160ff0219169083151502179055505050565b600080600073ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff1614610f605783610f62565b335b9050610f6d8361123f565b15610f97576000839050610f8182826110c6565b610f8c576000610f8e565b815b9250505061100b565b6000808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600084815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169150505b92915050565b6000806000611027856301ffc9a760e01b61126f565b8092508193505050600082148061103e5750600081145b1561104e576000925050506110c0565b61105f8563ffffffff60e01b61126f565b80925081935050506000821480611077575060008114155b15611087576000925050506110c0565b611091858561126f565b80925081935050506001821480156110a95750600181145b156110b9576001925050506110c0565b6000925050505b92915050565b6000600260008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060009054906101000a900460ff16611179576111728383611011565b9050611239565b8273ffffffffffffffffffffffffffffffffffffffff166000808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000847bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161490505b92915050565b60008060001b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff60001b8316149050919050565b60008060006301ffc9a760e01b905060405181815284600482015260208160248389617530fa9350805192505050925092905056fea265627a7a72315820f20896eed3a3d93eb870a9f54ec185c8ef63ed766b6d4f3437237889dfb3e8d864736f6c63430005110032",
+	"sourceMap": "139:2409:15:-;;;479:353;8:9:-1;5:2;;;30:1;27;20:12;5:2;479:353:15;;;;;;;;;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;479:353:15;;;;;;;;;;;;;;;;802:22;768:15;;:57;;;;;;;;;;;;;;;;;;479:353;139:2409;;;;;;",
+	"source": "pragma solidity ^0.5.8;\n\nimport \"./ERC1820Registry.sol\";\n\n/// @dev Contract that acts as a client for interacting with the ERC1820Registry\ncontract Registrar is ERC1820Registry {\n\n    ERC1820Registry ERC1820REGISTRY;\n    \n    /// @notice Constructor that takes an argument of the ERC1820RegistryAddress\n    /// @dev Upon actual deployment of a static registry contract, this argument can be removed\n    /// @param ERC1820RegistryAddress pre-deployed ERC1820 registry address\n    constructor (address ERC1820RegistryAddress) public {\n        // Below line is to be uncommented during actual deployment since mainnet has a version of this address\n        // ERC1820Registry constant ERC1820REGISTRY = ERC1820Registry(0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24);\n        ERC1820REGISTRY = ERC1820Registry(ERC1820RegistryAddress);\n    }\n\n    /// @dev This enables setting the interface implementation\n    /// @notice Since this is an internal method any contract inheriting this contract would be\n    /// leveraged as the sender for the interface registry\n    /// @param _interfaceLabel label for the interface or the contract that is to be registered\n    /// @param _implementation the implementing contract's address\n    function setInterfaceImplementation(string memory _interfaceLabel, address _implementation) internal {\n        bytes32 interfaceHash = keccak256(abi.encodePacked(_interfaceLabel));\n        ERC1820REGISTRY.setInterfaceImplementer(address(this), interfaceHash, _implementation);\n    }\n\n    /// @dev This enables getting the address of the implementer\n    /// @param addr the address for which the implementer is deployed\n    /// @param _interfaceLabel label for the interface or the contract that is registered\n    function interfaceAddr(address addr, string calldata _interfaceLabel) external view returns(address) {\n        bytes32 interfaceHash = keccak256(abi.encodePacked(_interfaceLabel));\n        return ERC1820REGISTRY.getInterfaceImplementer(addr, interfaceHash);\n    }\n\n    /// @dev This enables assigning or changing manager\n    /// @notice Since this is an internal method any contract inheriting this contract would be\n    /// leveraged to call this function directly\n    /// @param _oldManager address of the current manager who can set new interface implementations\n    /// @param _newManager address of the new manager who could set new interface implementations\n    function assignManagement(address _oldManager, address _newManager) internal {\n        ERC1820REGISTRY.setManager(_oldManager, _newManager);\n    }\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

@@ -8,6 +8,7 @@
       "incremental": true,
       "noUnusedLocals": false,
       "strict": false
-    }
+    },
+    "exclude": ["./test/**/"] //excludes test dir for build
   }
   

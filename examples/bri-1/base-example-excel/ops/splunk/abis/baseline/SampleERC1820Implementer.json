@@ -1,0 +1,39 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "SampleERC1820Implementer",
+	"abi": [
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "interfaceHash",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "addr",
+					"type": "address"
+				}
+			],
+			"name": "canImplementInterfaceForAddress",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x608060405234801561001057600080fd5b50610112806100206000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063249cb3fa14602d575b600080fd5b607660048036036040811015604157600080fd5b8101908080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050608c565b6040518082815260200191505060405180910390f35b600060405160200180807f455243313832305f4143434550545f4d4147494300000000000000000000000081525060140190506040516020818303038152906040528051906020012090509291505056fea265627a7a723158205de26164ff5bcf7a90ed09c4b9c12e76a0be2006a5837ba8850311d3ad5b077d64736f6c63430005110032",
+	"sourceMap": "70:227:18:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;70:227:18;;;;;;;",
+	"source": "pragma solidity ^0.5.8;\n\nimport \"./ERC1820ImplementerInterface.sol\";\n\ncontract SampleERC1820Implementer is ERC1820ImplementerInterface {\n\n    function canImplementInterfaceForAddress(bytes32 interfaceHash, address addr) external view returns(bytes32) {\n        return ERC1820_ACCEPT_MAGIC;\n    }\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

@@ -1,0 +1,43 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "IVerifier",
+	"abi": [
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "uint256[]",
+					"name": "_proof",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "_inputs",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "_vk",
+					"type": "uint256[]"
+				}
+			],
+			"name": "verify",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "result",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x",
+	"source": "/**\n@title IVerifier\n@dev Example Verifier Implementation\n@notice Do not use this example in any production code!\n*/\n\npragma solidity ^0.5.8;\n\n\ninterface IVerifier {\n\n    function verify(\n        uint256[] calldata _proof,\n        uint256[] calldata _inputs,\n        uint256[] calldata _vk\n    ) external returns (bool result);\n\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

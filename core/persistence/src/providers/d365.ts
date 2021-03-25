@@ -39,6 +39,11 @@ export class D365 implements IPersistenceService {
   delete(id: string): Promise<any> {
     throw new Error('not implemented');
   }
+  
+  publish(params: any): Promise<any> {
+    throw new Error('not implemented'); 
+  }
+  
 }
 
 export async function d365ServiceFactory(

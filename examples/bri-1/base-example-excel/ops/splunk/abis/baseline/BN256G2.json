@@ -1,0 +1,156 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "BN256G2",
+	"abi": [
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "pt1xx",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt1xy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt1yx",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt1yy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt2xx",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt2xy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt2yx",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt2yy",
+						"type": "uint256"
+					}
+				],
+				"name": "ECTwistAdd",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"payable": false,
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "s",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt1xx",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt1xy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt1yx",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pt1yy",
+						"type": "uint256"
+					}
+				],
+				"name": "ECTwistMul",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"payable": false,
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "GetFieldModulus",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"payable": false,
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+	"bytecode": "0x6111cf610026600b82828239805160001a60731461001957fe5b30600052607381538281f3fe730000000000000000000000000000000000000000301460806040526004361061004b5760003560e01c806355a3e90f1461005057806361a931ec1461006e578063b73ab75d1461010c575b600080fd5b61005861018b565b6040518082815260200191505060405180910390f35b6100e1600480360361010081101561008557600080fd5b8101908080359060200190929190803590602001909291908035906020019092919080359060200190929190803590602001909291908035906020019092919080359060200190929190803590602001909291905050506101b3565b6040518085815260200184815260200183815260200182815260200194505050505060405180910390f35b610160600480360360a081101561012257600080fd5b810190808035906020019092919080359060200190929190803590602001909291908035906020019092919080359060200190929190505050610359565b6040518085815260200184815260200183815260200182815260200194505050505060405180910390f35b60007f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47905090565b60008060008060008c1480156101c9575060008b145b80156101d5575060008a145b80156101e15750600089145b15610236576000881480156101f65750600087145b80156102025750600086145b801561020e5750600085145b6102255761021e8888888861045a565b61022457fe5b5b87878787935093509350935061034a565b6000881480156102465750600087145b80156102525750600086145b801561025e5750600085145b156102865761026f8c8c8c8c61045a565b61027557fe5b8b8b8b8b935093509350935061034a565b6102928c8c8c8c61045a565b61029857fe5b6102a48888888861045a565b6102aa57fe5b6102b2611178565b6102ca8d8d8d8d600160008f8f8f8f60016000610523565b9050610340816000600681106102dc57fe5b6020020151826001600681106102ee57fe5b60200201518360026006811061030057fe5b60200201518460036006811061031257fe5b60200201518560046006811061032457fe5b60200201518660056006811061033657fe5b6020020151610b17565b9450945094509450505b98509850985098945050505050565b6000806000806000600190506000891480156103755750600088145b80156103815750600087145b801561038d5750600086145b156103a3576001985060019650600090506103b6565b6103af8989898961045a565b6103b557fe5b5b6103be611178565b6103ce8b8b8b8b8b876000610b69565b9050610444816000600681106103e057fe5b6020020151826001600681106103f257fe5b60200201518360026006811061040457fe5b60200201518460036006811061041657fe5b60200201518560046006811061042857fe5b60200201518660056006811061043a57fe5b6020020151610b17565b9550955095509550505095509550955095915050565b600080600080600061046e87878989610c45565b809450819550505061048289898b8b610c45565b809250819350505061049682828b8b610c45565b80925081935050506104aa84848484610d53565b80945081955050506104fd84847f2b149d40ceb8aaae81be18991be06ac3b5b4c5e559dbefa33267e6dc24a138e57e9713b03af0fed4cd2cafadeed8fdf4a74fa084e52d1852e4a2bd0685c315d2610d53565b80945081955050506000841480156105155750600083145b945050505050949350505050565b61052b611178565b60008914801561053b5750600088145b156105d2578686868686868660006006811061055357fe5b602002018760016006811061056457fe5b602002018860026006811061057557fe5b602002018960036006811061058657fe5b602002018a60046006811061059757fe5b602002018b6005600681106105a857fe5b60200201868152508681525086815250868152508681525086815250505050505050809050610b07565b6000831480156105e25750600082145b15610679578c8c8c8c8c8c866000600681106105fa57fe5b602002018760016006811061060b57fe5b602002018860026006811061061c57fe5b602002018960036006811061062d57fe5b602002018a60046006811061063e57fe5b602002018b60056006811061064f57fe5b60200201868152508681525086815250868152508681525086815250505050505050809050610b07565b61068585858b8b610c45565b80955081965050506106998b8b8585610c45565b826002600681106106a657fe5b60200201836003600681106106b757fe5b60200201828152508281525050506106d187878b8b610c45565b80975081985050506106e58d8d8585610c45565b826004600681106106f257fe5b602002018360056006811061070357fe5b60200201828152508281525050508060046006811061071e57fe5b60200201518714801561074157508060056006811061073957fe5b602002015186145b156108be578060026006811061075357fe5b60200201518514801561077657508060036006811061076e57fe5b602002015184145b15610815576107898d8d8d8d8d8d610db9565b8660006006811061079657fe5b60200201876001600681106107a757fe5b60200201886002600681106107b857fe5b60200201896003600681106107c957fe5b602002018a6004600681106107da57fe5b602002018b6005600681106107eb57fe5b60200201868152508681525086815250868152508681525086815250505050505050809050610b07565b60016000600160008060008595508494508393508292508191508090508660006006811061083f57fe5b602002018760016006811061085057fe5b602002018860026006811061086157fe5b602002018960036006811061087257fe5b602002018a60046006811061088357fe5b602002018b60056006811061089457fe5b60200201868152508681525086815250868152508681525086815250505050505050809050610b07565b6108ca89898585610c45565b80935081945050506109008585836002600681106108e457fe5b6020020151846003600681106108f657fe5b6020020151610d53565b809d50819e50505061093687878360046006811061091a57fe5b60200201518460056006811061092c57fe5b6020020151610d53565b809b50819c50505061094a8b8b8d8d610c45565b809950819a50505061098089898360046006811061096457fe5b60200201518460056006811061097657fe5b6020020151610c45565b809550819650505061099489898d8d610c45565b809950819a5050506109a889898585610c45565b826004600681106109b557fe5b60200201836005600681106109c657fe5b60200201828152508281525050506109e08d8d8f8f610c45565b80975081985050506109f487878585610c45565b8097508198505050610a0887878b8b610d53565b8097508198505050610a1c85856002610f61565b8093508194505050610a3087878585610d53565b8097508198505050610a448b8b8989610c45565b82600060068110610a5157fe5b6020020183600160068110610a6257fe5b6020020182815250828152505050610a7c85858989610d53565b809b50819c505050610a908d8d8d8d610c45565b809b50819c505050610ac6898983600260068110610aaa57fe5b602002015184600360068110610abc57fe5b6020020151610c45565b809d50819e505050610ada8b8b8f8f610d53565b82600260068110610ae757fe5b6020020183600360068110610af857fe5b60200201828152508281525050505b9c9b505050505050505050505050565b600080600080600080610b2a8888610fc6565b8092508193505050610b3e8c8c8484610c45565b8096508197505050610b528a8a8484610c45565b809450819550505050509650965096509692505050565b610b71611178565b5b60008814610c3a5760006001891614610c0257610bff81600060068110610b9557fe5b602002015182600160068110610ba757fe5b602002015183600260068110610bb957fe5b602002015184600360068110610bcb57fe5b602002015185600460068110610bdd57fe5b602002015186600560068110610bef57fe5b60200201518d8d8d8d8d8d610523565b90505b610c10878787878787610db9565b809750819850829950839a50849b50859c5050505050505060028881610c3257fe5b049750610b72565b979650505050505050565b600080610cc77f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610c7357fe5b8588097f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610c9e57fe5b8588097f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd476110f9565b7f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610cef57fe5b7f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610d1757fe5b8688097f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610d4257fe5b868a09089150915094509492505050565b600080610d8186857f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd476110f9565b610dac86857f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd476110f9565b9150915094509492505050565b600080600080600080610dce8c8c6003610f61565b8096508197505050610de286868e8e610c45565b8096508197505050610df68a8a8a8a610c45565b8098508199505050610e0a8c8c8c8c610c45565b8094508195505050610e1e84848a8a610c45565b8094508195505050610e3286868888610c45565b809c50819d505050610e4684846008610f61565b8092508193505050610e5a8c8c8484610d53565b809c50819d505050610e6e88888a8a610c45565b8092508193505050610e8284846004610f61565b8094508195505050610e9684848e8e610d53565b8094508195505050610eaa84848888610c45565b8094508195505050610ebe8a8a6008610f61565b8096508197505050610ed286868c8c610c45565b8096508197505050610ee686868484610c45565b8096508197505050610efa84848888610d53565b8094508195505050610f0e8c8c6002610f61565b8096508197505050610f2286868a8a610c45565b8096508197505050610f3688888484610c45565b8092508193505050610f4a82826008610f61565b809250819350505096509650965096509650969050565b6000807f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610f8c57fe5b8386097f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610fb757fe5b84860991509150935093915050565b60008060006110737f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4780610ff657fe5b7f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd478061101e57fe5b8788097f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd478061104957fe5b878809087f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47611111565b90507f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd478061109d57fe5b8186097f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47806110c857fe5b8286097f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd470392509250509250929050565b6000818061110357fe5b838303850890509392505050565b60008090506000600190506000839050600085905060005b6000821461116e5781838161113a57fe5b0490508361115386888061114a57fe5b878509896110f9565b80955081965050508182820284038093508194505050611129565b5050505092915050565b6040518060c0016040528060069060208202803883398082019150509050509056fea265627a7a723158207023de54dab417cfd8fc3e23483b6edcf7518e4329d6a1b996d99f257d54ff1464736f6c63430005110032",
+	"sourceMap": "179:13809:0:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+	"source": "// This file is LGPL3 Licensed\n\npragma solidity ^0.5.8;\n\n/**\n * @title Elliptic curve operations on twist points for alt_bn128\n * @author Mustafa Al-Bassam (mus@musalbas.com)\n */\nlibrary BN256G2 {\n    uint256 internal constant FIELD_MODULUS = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47;\n    uint256 internal constant TWISTBX = 0x2b149d40ceb8aaae81be18991be06ac3b5b4c5e559dbefa33267e6dc24a138e5;\n    uint256 internal constant TWISTBY = 0x9713b03af0fed4cd2cafadeed8fdf4a74fa084e52d1852e4a2bd0685c315d2;\n    uint internal constant PTXX = 0;\n    uint internal constant PTXY = 1;\n    uint internal constant PTYX = 2;\n    uint internal constant PTYY = 3;\n    uint internal constant PTZX = 4;\n    uint internal constant PTZY = 5;\n    /**\n     * @notice Add two twist points\n     * @param pt1xx Coefficient 1 of x on point 1\n     * @param pt1xy Coefficient 2 of x on point 1\n     * @param pt1yx Coefficient 1 of y on point 1\n     * @param pt1yy Coefficient 2 of y on point 1\n     * @param pt2xx Coefficient 1 of x on point 2\n     * @param pt2xy Coefficient 2 of x on point 2\n     * @param pt2yx Coefficient 1 of y on point 2\n     * @param pt2yy Coefficient 2 of y on point 2\n     * @return (pt3xx, pt3xy, pt3yx, pt3yy)\n     */\n    function ECTwistAdd(\n        uint256 pt1xx, uint256 pt1xy,\n        uint256 pt1yx, uint256 pt1yy,\n        uint256 pt2xx, uint256 pt2xy,\n        uint256 pt2yx, uint256 pt2yy\n    ) public pure returns (\n        uint256, uint256,\n        uint256, uint256\n    ) {\n        if (\n            pt1xx == 0 && pt1xy == 0 &&\n            pt1yx == 0 && pt1yy == 0\n        ) {\n            if (!(\n                pt2xx == 0 && pt2xy == 0 &&\n                pt2yx == 0 && pt2yy == 0\n            )) {\n                assert(_isOnCurve(\n                    pt2xx, pt2xy,\n                    pt2yx, pt2yy\n                ));\n            }\n            return (\n                pt2xx, pt2xy,\n                pt2yx, pt2yy\n            );\n        } else if (\n            pt2xx == 0 && pt2xy == 0 &&\n            pt2yx == 0 && pt2yy == 0\n        ) {\n            assert(_isOnCurve(\n                pt1xx, pt1xy,\n                pt1yx, pt1yy\n            ));\n            return (\n                pt1xx, pt1xy,\n                pt1yx, pt1yy\n            );\n        }\n        assert(_isOnCurve(\n            pt1xx, pt1xy,\n            pt1yx, pt1yy\n        ));\n        assert(_isOnCurve(\n            pt2xx, pt2xy,\n            pt2yx, pt2yy\n        ));\n        uint256[6] memory pt3 = _ECTwistAddJacobian(\n            pt1xx, pt1xy,\n            pt1yx, pt1yy,\n            1,     0,\n            pt2xx, pt2xy,\n            pt2yx, pt2yy,\n            1,     0\n        );\n        return _fromJacobian(\n            pt3[PTXX], pt3[PTXY],\n            pt3[PTYX], pt3[PTYY],\n            pt3[PTZX], pt3[PTZY]\n        );\n    }\n    /**\n     * @notice Multiply a twist point by a scalar\n     * @param s     Scalar to multiply by\n     * @param pt1xx Coefficient 1 of x\n     * @param pt1xy Coefficient 2 of x\n     * @param pt1yx Coefficient 1 of y\n     * @param pt1yy Coefficient 2 of y\n     * @return (pt2xx, pt2xy, pt2yx, pt2yy)\n     */\n    function ECTwistMul(\n        uint256 s,\n        uint256 pt1xx, uint256 pt1xy,\n        uint256 pt1yx, uint256 pt1yy\n    ) public pure returns (\n        uint256, uint256,\n        uint256, uint256\n    ) {\n        uint256 pt1zx = 1;\n        if (\n            pt1xx == 0 && pt1xy == 0 &&\n            pt1yx == 0 && pt1yy == 0\n        ) {\n            pt1xx = 1;\n            pt1yx = 1;\n            pt1zx = 0;\n        } else {\n            assert(_isOnCurve(\n                pt1xx, pt1xy,\n                pt1yx, pt1yy\n            ));\n        }\n        uint256[6] memory pt2 = _ECTwistMulJacobian(\n            s,\n            pt1xx, pt1xy,\n            pt1yx, pt1yy,\n            pt1zx, 0\n        );\n        return _fromJacobian(\n            pt2[PTXX], pt2[PTXY],\n            pt2[PTYX], pt2[PTYY],\n            pt2[PTZX], pt2[PTZY]\n        );\n    }\n    /**\n     * @notice Get the field modulus\n     * @return The field modulus\n     */\n    function GetFieldModulus() public pure returns (uint256) {\n        return FIELD_MODULUS;\n    }\n    function submod(uint256 a, uint256 b, uint256 n) internal pure returns (uint256) {\n        return addmod(a, n - b, n);\n    }\n    function _FQ2Mul(\n        uint256 xx, uint256 xy,\n        uint256 yx, uint256 yy\n    ) internal pure returns(uint256, uint256) {\n        return (\n            submod(mulmod(xx, yx, FIELD_MODULUS), mulmod(xy, yy, FIELD_MODULUS), FIELD_MODULUS),\n            addmod(mulmod(xx, yy, FIELD_MODULUS), mulmod(xy, yx, FIELD_MODULUS), FIELD_MODULUS)\n        );\n    }\n    function _FQ2Muc(\n        uint256 xx, uint256 xy,\n        uint256 c\n    ) internal pure returns(uint256, uint256) {\n        return (\n            mulmod(xx, c, FIELD_MODULUS),\n            mulmod(xy, c, FIELD_MODULUS)\n        );\n    }\n    function _FQ2Add(\n        uint256 xx, uint256 xy,\n        uint256 yx, uint256 yy\n    ) internal pure returns(uint256, uint256) {\n        return (\n            addmod(xx, yx, FIELD_MODULUS),\n            addmod(xy, yy, FIELD_MODULUS)\n        );\n    }\n    function _FQ2Sub(\n        uint256 xx, uint256 xy,\n        uint256 yx, uint256 yy\n    ) internal pure returns(uint256 rx, uint256 ry) {\n        return (\n            submod(xx, yx, FIELD_MODULUS),\n            submod(xy, yy, FIELD_MODULUS)\n        );\n    }\n    function _FQ2Div(\n        uint256 xx, uint256 xy,\n        uint256 yx, uint256 yy\n    ) internal pure returns(uint256, uint256) {\n        (yx, yy) = _FQ2Inv(yx, yy);\n        return _FQ2Mul(xx, xy, yx, yy);\n    }\n    function _FQ2Inv(uint256 x, uint256 y) internal pure returns(uint256, uint256) {\n        uint256 inv = _modInv(addmod(mulmod(y, y, FIELD_MODULUS), mulmod(x, x, FIELD_MODULUS), FIELD_MODULUS), FIELD_MODULUS);\n        return (\n            mulmod(x, inv, FIELD_MODULUS),\n            FIELD_MODULUS - mulmod(y, inv, FIELD_MODULUS)\n        );\n    }\n    function _isOnCurve(\n        uint256 xx, uint256 xy,\n        uint256 yx, uint256 yy\n    ) internal pure returns (bool) {\n        uint256 yyx;\n        uint256 yyy;\n        uint256 xxxx;\n        uint256 xxxy;\n        (yyx, yyy) = _FQ2Mul(yx, yy, yx, yy);\n        (xxxx, xxxy) = _FQ2Mul(xx, xy, xx, xy);\n        (xxxx, xxxy) = _FQ2Mul(xxxx, xxxy, xx, xy);\n        (yyx, yyy) = _FQ2Sub(yyx, yyy, xxxx, xxxy);\n        (yyx, yyy) = _FQ2Sub(yyx, yyy, TWISTBX, TWISTBY);\n        return yyx == 0 && yyy == 0;\n    }\n    function _modInv(uint256 a, uint256 n) internal pure returns(uint256 t) {\n        t = 0;\n        uint256 newT = 1;\n        uint256 r = n;\n        uint256 newR = a;\n        uint256 q;\n        while (newR != 0) {\n            q = r / newR;\n            (t, newT) = (newT, submod(t, mulmod(q, newT, n), n));\n            (r, newR) = (newR, r - q * newR);\n        }\n    }\n    function _fromJacobian(\n        uint256 pt1xx, uint256 pt1xy,\n        uint256 pt1yx, uint256 pt1yy,\n        uint256 pt1zx, uint256 pt1zy\n    ) internal pure returns (\n        uint256 pt2xx, uint256 pt2xy,\n        uint256 pt2yx, uint256 pt2yy\n    ) {\n        uint256 invzx;\n        uint256 invzy;\n        (invzx, invzy) = _FQ2Inv(pt1zx, pt1zy);\n        (pt2xx, pt2xy) = _FQ2Mul(pt1xx, pt1xy, invzx, invzy);\n        (pt2yx, pt2yy) = _FQ2Mul(pt1yx, pt1yy, invzx, invzy);\n    }\n    function _ECTwistAddJacobian(\n        uint256 pt1xx, uint256 pt1xy,\n        uint256 pt1yx, uint256 pt1yy,\n        uint256 pt1zx, uint256 pt1zy,\n        uint256 pt2xx, uint256 pt2xy,\n        uint256 pt2yx, uint256 pt2yy,\n        uint256 pt2zx, uint256 pt2zy) internal pure returns (uint256[6] memory pt3) {\n            if (pt1zx == 0 && pt1zy == 0) {\n                (\n                    pt3[PTXX], pt3[PTXY],\n                    pt3[PTYX], pt3[PTYY],\n                    pt3[PTZX], pt3[PTZY]\n                ) = (\n                    pt2xx, pt2xy,\n                    pt2yx, pt2yy,\n                    pt2zx, pt2zy\n                );\n                return pt3;\n            } else if (pt2zx == 0 && pt2zy == 0) {\n                (\n                    pt3[PTXX], pt3[PTXY],\n                    pt3[PTYX], pt3[PTYY],\n                    pt3[PTZX], pt3[PTZY]\n                ) = (\n                    pt1xx, pt1xy,\n                    pt1yx, pt1yy,\n                    pt1zx, pt1zy\n                );\n                return pt3;\n            }\n            (pt2yx,     pt2yy)     = _FQ2Mul(pt2yx, pt2yy, pt1zx, pt1zy); // U1 = y2 * z1\n            (pt3[PTYX], pt3[PTYY]) = _FQ2Mul(pt1yx, pt1yy, pt2zx, pt2zy); // U2 = y1 * z2\n            (pt2xx,     pt2xy)     = _FQ2Mul(pt2xx, pt2xy, pt1zx, pt1zy); // V1 = x2 * z1\n            (pt3[PTZX], pt3[PTZY]) = _FQ2Mul(pt1xx, pt1xy, pt2zx, pt2zy); // V2 = x1 * z2\n            if (pt2xx == pt3[PTZX] && pt2xy == pt3[PTZY]) {\n                if (pt2yx == pt3[PTYX] && pt2yy == pt3[PTYY]) {\n                    (\n                        pt3[PTXX], pt3[PTXY],\n                        pt3[PTYX], pt3[PTYY],\n                        pt3[PTZX], pt3[PTZY]\n                    ) = _ECTwistDoubleJacobian(pt1xx, pt1xy, pt1yx, pt1yy, pt1zx, pt1zy);\n                    return pt3;\n                }\n                (\n                    pt3[PTXX], pt3[PTXY],\n                    pt3[PTYX], pt3[PTYY],\n                    pt3[PTZX], pt3[PTZY]\n                ) = (\n                    1, 0,\n                    1, 0,\n                    0, 0\n                );\n                return pt3;\n            }\n            (pt2zx,     pt2zy)     = _FQ2Mul(pt1zx, pt1zy, pt2zx,     pt2zy);     // W = z1 * z2\n            (pt1xx,     pt1xy)     = _FQ2Sub(pt2yx, pt2yy, pt3[PTYX], pt3[PTYY]); // U = U1 - U2\n            (pt1yx,     pt1yy)     = _FQ2Sub(pt2xx, pt2xy, pt3[PTZX], pt3[PTZY]); // V = V1 - V2\n            (pt1zx,     pt1zy)     = _FQ2Mul(pt1yx, pt1yy, pt1yx,     pt1yy);     // V_squared = V * V\n            (pt2yx,     pt2yy)     = _FQ2Mul(pt1zx, pt1zy, pt3[PTZX], pt3[PTZY]); // V_squared_times_V2 = V_squared * V2\n            (pt1zx,     pt1zy)     = _FQ2Mul(pt1zx, pt1zy, pt1yx,     pt1yy);     // V_cubed = V * V_squared\n            (pt3[PTZX], pt3[PTZY]) = _FQ2Mul(pt1zx, pt1zy, pt2zx,     pt2zy);     // newz = V_cubed * W\n            (pt2xx,     pt2xy)     = _FQ2Mul(pt1xx, pt1xy, pt1xx,     pt1xy);     // U * U\n            (pt2xx,     pt2xy)     = _FQ2Mul(pt2xx, pt2xy, pt2zx,     pt2zy);     // U * U * W\n            (pt2xx,     pt2xy)     = _FQ2Sub(pt2xx, pt2xy, pt1zx,     pt1zy);     // U * U * W - V_cubed\n            (pt2zx,     pt2zy)     = _FQ2Muc(pt2yx, pt2yy, 2);                    // 2 * V_squared_times_V2\n            (pt2xx,     pt2xy)     = _FQ2Sub(pt2xx, pt2xy, pt2zx,     pt2zy);     // A = U * U * W - V_cubed - 2 * V_squared_times_V2\n            (pt3[PTXX], pt3[PTXY]) = _FQ2Mul(pt1yx, pt1yy, pt2xx,     pt2xy);     // newx = V * A\n            (pt1yx,     pt1yy)     = _FQ2Sub(pt2yx, pt2yy, pt2xx,     pt2xy);     // V_squared_times_V2 - A\n            (pt1yx,     pt1yy)     = _FQ2Mul(pt1xx, pt1xy, pt1yx,     pt1yy);     // U * (V_squared_times_V2 - A)\n            (pt1xx,     pt1xy)     = _FQ2Mul(pt1zx, pt1zy, pt3[PTYX], pt3[PTYY]); // V_cubed * U2\n            (pt3[PTYX], pt3[PTYY]) = _FQ2Sub(pt1yx, pt1yy, pt1xx,     pt1xy);     // newy = U * (V_squared_times_V2 - A) - V_cubed * U2\n    }\n    function _ECTwistDoubleJacobian(\n        uint256 pt1xx, uint256 pt1xy,\n        uint256 pt1yx, uint256 pt1yy,\n        uint256 pt1zx, uint256 pt1zy\n    ) internal pure returns(\n        uint256 pt2xx, uint256 pt2xy,\n        uint256 pt2yx, uint256 pt2yy,\n        uint256 pt2zx, uint256 pt2zy\n    ) {\n        (pt2xx, pt2xy) = _FQ2Muc(pt1xx, pt1xy, 3);            // 3 * x\n        (pt2xx, pt2xy) = _FQ2Mul(pt2xx, pt2xy, pt1xx, pt1xy); // W = 3 * x * x\n        (pt1zx, pt1zy) = _FQ2Mul(pt1yx, pt1yy, pt1zx, pt1zy); // S = y * z\n        (pt2yx, pt2yy) = _FQ2Mul(pt1xx, pt1xy, pt1yx, pt1yy); // x * y\n        (pt2yx, pt2yy) = _FQ2Mul(pt2yx, pt2yy, pt1zx, pt1zy); // B = x * y * S\n        (pt1xx, pt1xy) = _FQ2Mul(pt2xx, pt2xy, pt2xx, pt2xy); // W * W\n        (pt2zx, pt2zy) = _FQ2Muc(pt2yx, pt2yy, 8);            // 8 * B\n        (pt1xx, pt1xy) = _FQ2Sub(pt1xx, pt1xy, pt2zx, pt2zy); // H = W * W - 8 * B\n        (pt2zx, pt2zy) = _FQ2Mul(pt1zx, pt1zy, pt1zx, pt1zy); // S_squared = S * S\n        (pt2yx, pt2yy) = _FQ2Muc(pt2yx, pt2yy, 4);            // 4 * B\n        (pt2yx, pt2yy) = _FQ2Sub(pt2yx, pt2yy, pt1xx, pt1xy); // 4 * B - H\n        (pt2yx, pt2yy) = _FQ2Mul(pt2yx, pt2yy, pt2xx, pt2xy); // W * (4 * B - H)\n        (pt2xx, pt2xy) = _FQ2Muc(pt1yx, pt1yy, 8);            // 8 * y\n        (pt2xx, pt2xy) = _FQ2Mul(pt2xx, pt2xy, pt1yx, pt1yy); // 8 * y * y\n        (pt2xx, pt2xy) = _FQ2Mul(pt2xx, pt2xy, pt2zx, pt2zy); // 8 * y * y * S_squared\n        (pt2yx, pt2yy) = _FQ2Sub(pt2yx, pt2yy, pt2xx, pt2xy); // newy = W * (4 * B - H) - 8 * y * y * S_squared\n        (pt2xx, pt2xy) = _FQ2Muc(pt1xx, pt1xy, 2);            // 2 * H\n        (pt2xx, pt2xy) = _FQ2Mul(pt2xx, pt2xy, pt1zx, pt1zy); // newx = 2 * H * S\n        (pt2zx, pt2zy) = _FQ2Mul(pt1zx, pt1zy, pt2zx, pt2zy); // S * S_squared\n        (pt2zx, pt2zy) = _FQ2Muc(pt2zx, pt2zy, 8);            // newz = 8 * S * S_squared\n    }\n    function _ECTwistMulJacobian(\n        uint256 d,\n        uint256 pt1xx, uint256 pt1xy,\n        uint256 pt1yx, uint256 pt1yy,\n        uint256 pt1zx, uint256 pt1zy\n    ) internal pure returns(uint256[6] memory pt2) {\n        while (d != 0) {\n            if ((d & 1) != 0) {\n                pt2 = _ECTwistAddJacobian(\n                    pt2[PTXX], pt2[PTXY],\n                    pt2[PTYX], pt2[PTYY],\n                    pt2[PTZX], pt2[PTZY],\n                    pt1xx, pt1xy,\n                    pt1yx, pt1yy,\n                    pt1zx, pt1zy);\n            }\n            (\n                pt1xx, pt1xy,\n                pt1yx, pt1yy,\n                pt1zx, pt1zy\n            ) = _ECTwistDoubleJacobian(\n                pt1xx, pt1xy,\n                pt1yx, pt1yy,\n                pt1zx, pt1zy\n            );\n            d = d / 2;\n        }\n    }\n}\n",
+	"sourceTreeHashHex": "0x6a5a6ac75c52e543689fe2a9b6e1ea89dbad62c97316288518566c155adca207",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

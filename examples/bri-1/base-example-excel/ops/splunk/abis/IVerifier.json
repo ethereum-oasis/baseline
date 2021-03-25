@@ -1,0 +1,500 @@
+{
+  "contractName": "IVerifier",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_proof",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_inputs",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_vk",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "verify",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "result",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.9+commit.3e3065ac\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_proof\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_inputs\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_vk\",\"type\":\"uint256[]\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Example Verifier Implementation\",\"methods\":{},\"title\":\"IVerifier\"},\"userdoc\":{\"methods\":{},\"notice\":\"Do not use this example in any production code!\"}},\"settings\":{\"compilationTarget\":{\"/Users/kt/code/provide.network/baseline/core/contracts/contracts/IVerifier.sol\":\"IVerifier\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/kt/code/provide.network/baseline/core/contracts/contracts/IVerifier.sol\":{\"keccak256\":\"0xb13a9bf6116e3515f94bd62ea7733694c5c1ce0b5df09e7bb2c29d10698ffab7\",\"urls\":[\"bzz-raw://3a19a325b996ba2ce416c61d7823a2901f1b241373b74ac54a17c0123c2e6133\",\"dweb:/ipfs/Qmeui9Ja9DJmAkZ7WmUTAtoE4CPUVn6uTmKGY1dhBbhUU9\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.6.9;\n\n/**\n@title IVerifier\n@dev Example Verifier Implementation\n@notice Do not use this example in any production code!\n*/\ninterface IVerifier {\n\n    function verify(\n        uint256[] calldata _proof,\n        uint256[] calldata _inputs,\n        uint256[] calldata _vk\n    ) external returns (bool result);\n}\n",
+  "sourcePath": "/Users/kt/code/provide.network/baseline/core/contracts/contracts/IVerifier.sol",
+  "ast": {
+    "absolutePath": "/Users/kt/code/provide.network/baseline/core/contracts/contracts/IVerifier.sol",
+    "exportedSymbols": {
+      "IVerifier": [
+        2150
+      ]
+    },
+    "id": 2151,
+    "license": null,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2134,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:6"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 2135,
+          "nodeType": "StructuredDocumentation",
+          "src": "25:116:6",
+          "text": "@title IVerifier\n@dev Example Verifier Implementation\n@notice Do not use this example in any production code!"
+        },
+        "fullyImplemented": false,
+        "id": 2150,
+        "linearizedBaseContracts": [
+          2150
+        ],
+        "name": "IVerifier",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "functionSelector": "87d9d023",
+            "id": 2149,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 2145,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2138,
+                  "mutability": "mutable",
+                  "name": "_proof",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "194:25:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2136,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "194:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2137,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "194:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2141,
+                  "mutability": "mutable",
+                  "name": "_inputs",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "229:26:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2139,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "229:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2140,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "229:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2144,
+                  "mutability": "mutable",
+                  "name": "_vk",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "265:22:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2142,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "265:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2143,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "265:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "184:109:6"
+            },
+            "returnParameters": {
+              "id": 2148,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2147,
+                  "mutability": "mutable",
+                  "name": "result",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "312:11:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 2146,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "312:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "311:13:6"
+            },
+            "scope": 2150,
+            "src": "169:156:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 2151,
+        "src": "142:185:6"
+      }
+    ],
+    "src": "0:328:6"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/kt/code/provide.network/baseline/core/contracts/contracts/IVerifier.sol",
+    "exportedSymbols": {
+      "IVerifier": [
+        2150
+      ]
+    },
+    "id": 2151,
+    "license": null,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2134,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:6"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 2135,
+          "nodeType": "StructuredDocumentation",
+          "src": "25:116:6",
+          "text": "@title IVerifier\n@dev Example Verifier Implementation\n@notice Do not use this example in any production code!"
+        },
+        "fullyImplemented": false,
+        "id": 2150,
+        "linearizedBaseContracts": [
+          2150
+        ],
+        "name": "IVerifier",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "functionSelector": "87d9d023",
+            "id": 2149,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 2145,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2138,
+                  "mutability": "mutable",
+                  "name": "_proof",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "194:25:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2136,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "194:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2137,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "194:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2141,
+                  "mutability": "mutable",
+                  "name": "_inputs",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "229:26:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2139,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "229:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2140,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "229:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2144,
+                  "mutability": "mutable",
+                  "name": "_vk",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "265:22:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2142,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "265:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2143,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "265:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "184:109:6"
+            },
+            "returnParameters": {
+              "id": 2148,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2147,
+                  "mutability": "mutable",
+                  "name": "result",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 2149,
+                  "src": "312:11:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 2146,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "312:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "311:13:6"
+            },
+            "scope": 2150,
+            "src": "169:156:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 2151,
+        "src": "142:185:6"
+      }
+    ],
+    "src": "0:328:6"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.9+commit.3e3065ac.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-07-20T20:25:33.829Z",
+  "devdoc": {
+    "details": "Example Verifier Implementation",
+    "methods": {},
+    "title": "IVerifier"
+  },
+  "userdoc": {
+    "methods": {},
+    "notice": "Do not use this example in any production code!"
+  }
+}

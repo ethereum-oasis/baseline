@@ -1,0 +1,144 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "IOrgRegistry",
+	"abi": [
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"name": "getOrg",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				},
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "getOrgCount",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "getOrgs",
+			"outputs": [
+				{
+					"internalType": "address[]",
+					"name": "",
+					"type": "address[]"
+				},
+				{
+					"internalType": "bytes32[]",
+					"name": "",
+					"type": "bytes32[]"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "bytes[]",
+					"name": "",
+					"type": "bytes[]"
+				},
+				{
+					"internalType": "bytes[]",
+					"name": "",
+					"type": "bytes[]"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				},
+				{
+					"internalType": "bytes",
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"name": "registerOrg",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x",
+	"source": "pragma solidity ^0.5.8;\npragma experimental ABIEncoderV2;\n\n\ninterface IOrgRegistry {\n    function registerOrg(\n        address,\n        bytes32,\n        uint,\n        bytes calldata,\n        bytes calldata\n    ) external returns (bool);\n\n    function getOrgCount() external view returns (uint);\n\n    function getOrg(address) external view returns (\n        address,\n        bytes32,\n        uint,\n        bytes memory,\n        bytes memory\n    );\n\n    function getOrgs() external view returns (\n        address[] memory,\n        bytes32[] memory,\n        uint[] memory,\n        bytes[] memory,\n        bytes[] memory\n    );\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

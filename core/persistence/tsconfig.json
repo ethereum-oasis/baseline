@@ -1,5 +1,5 @@
 {
-  "include": ["./src/**/*"],
+  "include": ["./src/**/*", "./test/**/*"],
   "compilerOptions": {
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
@@ -30,5 +30,5 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "target": "es2017"
-  }
+  },
 }

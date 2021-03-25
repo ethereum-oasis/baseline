@@ -1,0 +1,15 @@
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\bin\Debug\ExcelAddInPersistence.dll
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\bin\Debug\ExcelAddInPersistence.pdb
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\bin\Debug\ExcelAddInPersistence.dll.manifest
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\bin\Debug\ExcelAddInPersistence.vsto
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.csprojAssemblyReference.cache
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.Properties.Resources.resources
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.csproj.GenerateResource.cache
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.csproj.CoreCompileInputs.cache
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.csproj.CopyComplete
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.dll
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.pdb
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\bin\Debug\Newtonsoft.Json.dll
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\bin\Debug\Newtonsoft.Json.xml
+C:\Users\esteb\source\repos\ExcelAddInPersistence\ExcelAddInPersistence\obj\Debug\ExcelAddInPersistence.TaskControl.resources

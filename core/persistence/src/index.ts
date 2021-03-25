@@ -10,12 +10,14 @@ export interface IPersistenceService {
 
   subscribe(params: any): Promise<any>;
   unsubscribe(params: any): Promise<any>;
+  publish(params: any): Promise<any>;
 
   query(q: string): Promise<any>;
   read(id: string): Promise<any>;
   create(params: any): Promise<any>;
   update(id: string, params: any): Promise<any>;
   delete(id: string): Promise<any>;
+
 }
 
 export async function persistenceServiceFactory(

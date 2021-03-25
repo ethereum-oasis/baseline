@@ -1,0 +1,772 @@
+version: '3.5'
+
+x-logging:
+  &splunk-logging
+  driver: splunk
+  options:
+    splunk-token: 11111111-1111-1111-1111-1111111111113
+    splunk-url: https://localhost:8088
+    splunk-index: logs
+    splunk-sourcetype: docker
+    splunk-insecureskipverify: "true"
+    splunk-verify-connection: "false"
+    splunk-format: "raw"
+    tag: "{{.Name}}-{{.ID}}"
+
+services:
+
+  # alice
+
+  alice-postgres:
+    image: postgres
+    container_name: alice-postgres
+    environment:
+      - POSTGRES_DB=prvd
+      - POSTGRES_USER=prvd
+      - POSTGRES_PASSWORD=prvdp455
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "prvd", "-d", "prvd"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-postgres
+    volumes:
+      - alice-db:/var/lib/postgresql/data
+    networks:
+      - alice
+    ports:
+      - 5432:5432
+    restart: always
+
+  alice-redis:
+    image: redis
+    container_name: alice-redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-redis
+    networks:
+      - alice
+    ports:
+      - 6379:6379
+    restart: always
+
+  alice-nats:
+    image: provide/nats-server
+    container_name: alice-provide-nats
+    command: ["-auth", "testtoken", "-p", "4222", "--remote_syslog", "udp://splunk:8514", "-D", "-V"]
+    environment:
+      JWT_SIGNER_PUBLIC_KEY: |-
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAullT/WoZnxecxKwQFlwE
+        9lpQrekSD+txCgtb9T3JvvX/YkZTYkerf0rssQtrwkBlDQtm2cB5mHlRt4lRDKQy
+        EA2qNJGM1Yu379abVObQ9ZXI2q7jTBZzL/Yl9AgUKlDIAXYFVfJ8XWVTi0l32Vsx
+        tJSd97hiRXO+RqQu5UEr3jJ5tL73iNLp5BitRBwa4KbDCbicWKfSH5hK5DM75EyM
+        R/SzR3oCLPFNLs+fyc7zH98S1atglbelkZsMk/mSIKJJl1fZFVCUxA+8CaPiKbpD
+        QLpzydqyrk/y275aSU/tFHidoewvtWorNyFWRnefoWOsJFlfq1crgMu2YHTMBVtU
+        SJ+4MS5D9fuk0queOqsVUgT7BVRSFHgDH7IpBZ8s9WRrpE6XOE+feTUyyWMjkVgn
+        gLm5RSbHpB8Wt/Wssy3VMPV3T5uojPvX+ITmf1utz0y41gU+iZ/YFKeNN8WysLxX
+        AP3Bbgo+zNLfpcrH1Y27WGBWPtHtzqiafhdfX6LQ3/zXXlNuruagjUohXaMltH+S
+        K8zK4j7n+BYl+7y1dzOQw4CadsDi5whgNcg2QUxuTlW+TQ5VBvdUl9wpTSygD88H
+        xH2b0OBcVjYsgRnQ9OZpQ+kIPaFhaWChnfEArCmhrOEgOnhfkr6YGDHFenfT3/RA
+        PUl1cxrvY7BHh4obNa6Bf8ECAwEAAQ==
+        -----END PUBLIC KEY-----
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:4222"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-nats
+    networks:
+      - alice
+    ports:
+      - 4221:4221
+      - 4222:4222
+    restart: always
+    volumes:
+      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
+
+  alice-nats-streaming:
+    image: provide/nats-streaming
+    command: ["-cid", "provide", "--auth", "testtoken", "-SDV"]
+    container_name: alice-nats-streaming
+    depends_on:
+      - alice-nats
+    environment:
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:4222"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-nats-streaming
+    networks:
+      - alice
+    restart: always
+    volumes:
+      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
+
+  alice-ident:
+    image: provide/ident
+    container_name: alice-ident
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+    environment:
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=ident_dev
+      - DATABASE_USER=ident
+      - DATABASE_PASSWORD=ident
+      - NATS_CLIENT_PREFIX=alice-ident
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - REDIS_HOSTS=alice-redis:6379
+      - LOG_LEVEL=DEBUG
+      - PORT=8080
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-ident:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-ident
+    networks:
+      - alice
+    ports:
+      - 8081:8080
+    restart: always
+
+  alice-ident-consumer:
+    image: provide/ident
+    entrypoint: ./ops/run_consumer.sh
+    container_name: alice-ident-consumer
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+    environment:
+      - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=ident_dev
+      - DATABASE_USER=ident
+      - DATABASE_PASSWORD=ident
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=alice-ident-consumer
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - PORT=8080
+      - REDIS_HOSTS=alice-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_SCHEME=http
+      - VAULT_API_HOST=alice-vault:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-ident:8080/status"] # FIXME
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-ident-consumer
+    networks:
+      - alice
+    restart: always
+
+  alice-nchain:
+    image: provide/nchain
+    container_name: alice-nchain
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+    environment:
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=nchain_dev
+      - DATABASE_USER=nchain
+      - DATABASE_PASSWORD=nchain
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=alice-nchain
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - PORT=8080
+      - REDIS_HOSTS=alice-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-nchain
+    networks:
+      - alice
+    ports:
+      - 8080:8080
+    restart: always
+
+  alice-nchain-consumer:
+    image: provide/nchain
+    entrypoint: ./ops/run_consumer.sh
+    container_name: alice-nchain-consumer
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+    environment:
+      - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=nchain_dev
+      - DATABASE_USER=nchain
+      - DATABASE_PASSWORD=nchain
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=alice-nchain-consumer
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - NATS_TOKEN=testtoken
+      - REDIS_HOSTS=alice-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"] # FIXME
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-nchain-consumer
+    networks:
+      - alice
+    restart: always
+
+  alice-statsdaemon:
+    image: provide/nchain
+    entrypoint: ./ops/run_statsdaemon.sh
+    container_name: alice-statsdaemon
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+    environment:
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=nchain_dev
+      - DATABASE_USER=nchain
+      - DATABASE_PASSWORD=nchain
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=statsdaemon
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - REDIS_HOSTS=alice-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"] # FIXME
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-statsdaemon
+    networks:
+      - alice
+    restart: always
+
+  alice-vault:
+    image: provide/vault
+    container_name: alice-vault
+    depends_on:
+      - alice-postgres
+    environment:
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=vault_dev
+      - DATABASE_USER=vault
+      - DATABASE_PASSWORD=vault
+      - LOG_LEVEL=DEBUG
+      - PORT=8080
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-vault:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-vault
+    networks:
+      - alice
+    ports:
+      - 8082:8080
+    restart: always
+
+  alice-nethermind:
+    image: provide/nethermind
+    container_name: alice-nethermind
+    environment:
+      - NETHERMIND_CONFIG=baseline
+      - NETHERMIND_INITCONFIG_STATICNODESPATH=Data/static-nodes-baseline-hosts.json
+      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_PORT=8522
+      - NETHERMIND_KEYSTORECONFIG_TESTNODEKEY=020102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f
+      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=30222
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=30222
+      - NETHERMIND_SYNCCONFIG_FASTSYNC=false
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:8522"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-nethermind
+    networks:
+      - alice
+      - bob
+    ports:
+      - 8522:8522
+      - 30222:30222
+    restart: always
+    volumes:
+      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
+
+  # bob
+
+  bob-postgres:
+    image: postgres
+    container_name: bob-postgres
+    environment:
+      - POSTGRES_DB=prvd
+      - POSTGRES_USER=prvd
+      - POSTGRES_PASSWORD=prvdp455
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "prvd", "-d", "prvd"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-postgres
+    volumes:
+      - bob-db:/var/lib/postgresql/data
+    networks:
+      - bob
+    ports:
+      - 5433:5432
+    restart: always
+
+  bob-redis:
+    image: redis
+    container_name: bob-redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-redis
+    networks:
+      - bob
+    restart: always
+
+  bob-nats:
+    image: provide/nats-server
+    container_name: bob-provide-nats
+    command: ["-auth", "testtoken", "-p", "4222", "--remote_syslog", "udp://splunk:8514", "-D", "-V"]
+    environment:
+      JWT_SIGNER_PUBLIC_KEY: |-
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAullT/WoZnxecxKwQFlwE
+        9lpQrekSD+txCgtb9T3JvvX/YkZTYkerf0rssQtrwkBlDQtm2cB5mHlRt4lRDKQy
+        EA2qNJGM1Yu379abVObQ9ZXI2q7jTBZzL/Yl9AgUKlDIAXYFVfJ8XWVTi0l32Vsx
+        tJSd97hiRXO+RqQu5UEr3jJ5tL73iNLp5BitRBwa4KbDCbicWKfSH5hK5DM75EyM
+        R/SzR3oCLPFNLs+fyc7zH98S1atglbelkZsMk/mSIKJJl1fZFVCUxA+8CaPiKbpD
+        QLpzydqyrk/y275aSU/tFHidoewvtWorNyFWRnefoWOsJFlfq1crgMu2YHTMBVtU
+        SJ+4MS5D9fuk0queOqsVUgT7BVRSFHgDH7IpBZ8s9WRrpE6XOE+feTUyyWMjkVgn
+        gLm5RSbHpB8Wt/Wssy3VMPV3T5uojPvX+ITmf1utz0y41gU+iZ/YFKeNN8WysLxX
+        AP3Bbgo+zNLfpcrH1Y27WGBWPtHtzqiafhdfX6LQ3/zXXlNuruagjUohXaMltH+S
+        K8zK4j7n+BYl+7y1dzOQw4CadsDi5whgNcg2QUxuTlW+TQ5VBvdUl9wpTSygD88H
+        xH2b0OBcVjYsgRnQ9OZpQ+kIPaFhaWChnfEArCmhrOEgOnhfkr6YGDHFenfT3/RA
+        PUl1cxrvY7BHh4obNa6Bf8ECAwEAAQ==
+        -----END PUBLIC KEY-----
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:4224"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-nats
+    networks:
+      - bob
+    ports:
+      - 4223:4221
+      - 4224:4222
+    restart: always
+    volumes:
+      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
+
+  bob-nats-streaming:
+    image: provide/nats-streaming
+    command: ["-cid", "provide", "--auth", "testtoken", "-SDV"]
+    container_name: bob-nats-streaming
+    depends_on:
+      - bob-nats
+    environment:
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:4222"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-nats-streaming
+    networks:
+      - bob
+    restart: always
+    volumes:
+      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
+
+  bob-ident:
+    image: provide/ident
+    container_name: bob-ident
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
+    environment:
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=ident_dev
+      - DATABASE_USER=ident
+      - DATABASE_PASSWORD=ident
+      - NATS_CLIENT_PREFIX=bob-ident
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - REDIS_HOSTS=bob-redis:6379
+      - LOG_LEVEL=DEBUG
+      - PORT=8080
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-ident:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-ident
+    networks:
+      - bob
+    ports:
+      - 8085:8080
+    restart: always
+
+  bob-ident-consumer:
+    image: provide/ident
+    entrypoint: ./ops/run_consumer.sh
+    container_name: bob-ident-consumer
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
+    environment:
+      - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=ident_dev
+      - DATABASE_USER=ident
+      - DATABASE_PASSWORD=ident
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=bob-ident-consumer
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - REDIS_HOSTS=bob-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_SCHEME=http
+      - VAULT_API_HOST=bob-vault:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-ident:8080/status"] # FIXME
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-ident-consumer
+    networks:
+      - bob
+    restart: always
+
+  bob-nchain:
+    image: provide/nchain
+    container_name: bob-nchain
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
+    environment:
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=nchain_dev
+      - DATABASE_USER=nchain
+      - DATABASE_PASSWORD=nchain
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=bob-nchain
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - PORT=8080
+      - REDIS_HOSTS=bob-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-nchain
+    networks:
+      - bob
+    ports:
+      - 8086:8080
+    restart: always
+
+  bob-nchain-consumer:
+    image: provide/nchain
+    entrypoint: ./ops/run_consumer.sh
+    container_name: bob-nchain-consumer
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
+    environment:
+      - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=nchain_dev
+      - DATABASE_USER=nchain
+      - DATABASE_PASSWORD=nchain
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=bob-nchain-consumer
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - NATS_TOKEN=testtoken
+      - PORT=8080
+      - REDIS_HOSTS=bob-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"] # FIXME
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-nchain-consumer
+    networks:
+      - bob
+    restart: always
+
+  bob-statsdaemon:
+    image: provide/nchain
+    entrypoint: ./ops/run_statsdaemon.sh
+    container_name: bob-statsdaemon
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
+    environment:
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=nchain_dev
+      - DATABASE_USER=nchain
+      - DATABASE_PASSWORD=nchain
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=statsdaemon
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - REDIS_HOSTS=bob-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"] # FIXME
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-statsdaemon
+    networks:
+      - bob
+    restart: always
+
+  bob-vault:
+    image: provide/vault
+    container_name: bob-vault
+    depends_on:
+      - bob-postgres
+    environment:
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=vault_dev
+      - DATABASE_USER=vault
+      - DATABASE_PASSWORD=vault
+      - LOG_LEVEL=DEBUG
+      - PORT=8080
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-vault:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-vault
+    networks:
+      - bob
+    ports:
+      - 8083:8080
+    restart: always
+
+  bob-nethermind:
+    image: provide/nethermind
+    container_name: bob-nethermind
+    environment:
+      - NETHERMIND_CONFIG=baseline
+      - NETHERMIND_INITCONFIG_STATICNODESPATH=Data/static-nodes-baseline-hosts.json
+      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_PORT=8511
+      - NETHERMIND_KEYSTORECONFIG_TESTNODEKEY=120102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f
+      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=30111
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=30111
+      - NETHERMIND_SYNCCONFIG_FASTSYNC=false
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:8511"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-nethermind
+    networks:
+      - alice
+      - bob
+    ports:
+      - 8511:8511
+      - 30111:30111
+    restart: always
+    volumes:
+      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
+
+  # splunk stack
+
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk
+    hostname: splunk
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+      - SPLUNK_PASSWORD=changeme
+      - SPLUNK_APPS_URL=https://github.com/splunk/ethereum-basics/releases/download/latest/ethereum-basics.tgz
+    expose:
+      - "8000"
+      - "8088"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+      interval: 5s
+      timeout: 5s
+      retries: 2
+    ports:
+      - "8000:8000"
+      - "8088:8088"
+      - "8514:8514"
+    volumes:
+      - splunk-var:/opt/splunk/var
+      - splunk-etc:/opt/splunk/etc
+      - ./ops/splunk/splunk-config.yml:/tmp/defaults/default.yml
+      - ./ops/splunk/dashboards:/opt/splunk/etc/apps/search/local/data/ui/views/
+    networks:
+      - alice
+      - bob
+
+  alice-ethlogger:
+    container_name: alice-ethlogger
+    image: splunkdlt/ethlogger:latest
+    environment:
+      - ETH_RPC_URL=http://alice-nethermind:8522
+      - NETWORK_NAME=ropsten
+      - START_AT_BLOCK=latest
+      - SPLUNK_HEC_URL=https://splunk:8088
+      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+      - SPLUNK_EVENTS_INDEX=main
+      - SPLUNK_METRICS_INDEX=eth_metrics
+      - SPLUNK_INTERNAL_INDEX=eth_metrics
+      - SPLUNK_HEC_REJECT_INVALID_CERTS=false
+      - ABI_DIR=/app/abis
+      - COLLECT_PENDING_TX=true
+      - COLLECT_PEER_INFO=true
+      - DEBUG=ethlogger:abi:*
+    depends_on:
+      - splunk
+      - alice-nethermind
+    restart: unless-stopped
+    hostname: alice-ethlogger
+    volumes:
+      - ./ops/splunk/abis:/app/abis
+      - ./ops/splunk:/app
+    networks:
+      - alice
+      - bob
+    logging: *splunk-logging
+
+  bob-ethlogger:
+    container_name: bob-ethlogger
+    image: splunkdlt/ethlogger:latest
+    environment:
+      - ETH_RPC_URL=http://bob-nethermind:8511
+      - NETWORK_NAME=ropsten
+      - START_AT_BLOCK=latest
+      - SPLUNK_HEC_URL=https://splunk:8088
+      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+      - SPLUNK_EVENTS_INDEX=main
+      - SPLUNK_METRICS_INDEX=eth_metrics
+      - SPLUNK_INTERNAL_INDEX=eth_metrics
+      - SPLUNK_HEC_REJECT_INVALID_CERTS=false
+      - ABI_DIR=/app/abis
+      - COLLECT_PENDING_TX=true
+      - COLLECT_PEER_INFO=true
+      - DEBUG=ethlogger:abi:*
+    depends_on:
+      - splunk
+      - bob-nethermind
+    restart: unless-stopped
+    hostname: bob-ethlogger
+    volumes:
+      - ./ops/splunk/abis:/app/abis
+      - ./ops/splunk:/app
+    networks:
+      - alice
+      - bob
+    logging: *splunk-logging
+
+  cadvisor:
+    image: google/cadvisor:latest
+    command:
+      - --storage_driver=statsd
+      - --storage_driver_host=splunk:8125
+      - --docker_only=true
+    depends_on:
+      - splunk
+    user: root
+    hostname: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - alice
+      - bob
+    logging: *splunk-logging
+
+networks:
+  alice:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.40.0.0/24
+  bob:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.50.0.0/24
+
+volumes:
+  alice-db:
+  bob-db:
+  splunk-etc:
+  splunk-var:

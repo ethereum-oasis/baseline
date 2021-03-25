@@ -1,0 +1,242 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "ERC1820Registry",
+	"abi": [
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "addr",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "interfaceHash",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "implementer",
+					"type": "address"
+				}
+			],
+			"name": "InterfaceImplementerSet",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "addr",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "newManager",
+					"type": "address"
+				}
+			],
+			"name": "ManagerChanged",
+			"type": "event"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_interfaceHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "getInterfaceImplementer",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				}
+			],
+			"name": "getManager",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contract",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes4",
+					"name": "_interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "implementsERC165Interface",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contract",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes4",
+					"name": "_interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "implementsERC165InterfaceNoCache",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "_interfaceName",
+					"type": "string"
+				}
+			],
+			"name": "interfaceHash",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"payable": false,
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_interfaceHash",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_implementer",
+					"type": "address"
+				}
+			],
+			"name": "setInterfaceImplementer",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_addr",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_newManager",
+					"type": "address"
+				}
+			],
+			"name": "setManager",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contract",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes4",
+					"name": "_interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "updateERC165Cache",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x608060405234801561001057600080fd5b506110d4806100206000396000f3fe608060405234801561001057600080fd5b50600436106100885760003560e01c8063a41e7d511161005b578063a41e7d5114610270578063aabbb8ca146102dd578063b70567651461036b578063f712f3e8146103f057610088565b806329965a1d1461008d5780633d584063146100fb5780635df8122f1461017f57806365ba36c1146101e3575b600080fd5b6100f9600480360360608110156100a357600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610475565b005b61013d6004803603602081101561011157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506108b1565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6101e16004803603604081101561019557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506109b6565b005b61025a600480360360208110156101f957600080fd5b810190808035906020019064010000000081111561021657600080fd5b82018360208201111561022857600080fd5b8035906020019184600183028401116401000000008311171561024a57600080fd5b9091929391929390505050610b76565b6040518082815260200191505060405180910390f35b6102db6004803603604081101561028657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190929190505050610bb0565b005b610329600480360360408110156102f357600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610d1e565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6103d66004803603604081101561038157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190929190505050610e0c565b604051808215151515815260200191505060405180910390f35b61045b6004803603604081101561040657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19169060200190929190505050610ec1565b604051808215151515815260200191505060405180910390f35b60008073ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff16146104b057836104b2565b335b90503373ffffffffffffffffffffffffffffffffffffffff166104d4826108b1565b73ffffffffffffffffffffffffffffffffffffffff161461055d576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252600f8152602001807f4e6f7420746865206d616e61676572000000000000000000000000000000000081525060200191505060405180910390fd5b6105668361103a565b156105d9576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601a8152602001807f4d757374206e6f7420626520616e20455243313635206861736800000000000081525060200191505060405180910390fd5b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff161415801561064257503373ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614155b156107c25760405160200180807f455243313832305f4143434550545f4d414749430000000000000000000000008152506014019050604051602081830303815290604052805190602001208273ffffffffffffffffffffffffffffffffffffffff1663249cb3fa85846040518363ffffffff1660e01b8152600401808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060206040518083038186803b15801561071357600080fd5b505afa158015610727573d6000803e3d6000fd5b505050506040513d602081101561073d57600080fd5b8101908080519060200190929190505050146107c1576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260208152602001807f446f6573206e6f7420696d706c656d656e742074686520696e7465726661636581525060200191505060405180910390fd5b5b816000808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600085815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff16838273ffffffffffffffffffffffffffffffffffffffff167f93baa6efbd2244243bfee6ce4cfdd1d04fc4c0e9a786abd3a41313bd352db15360405160405180910390a450505050565b60008073ffffffffffffffffffffffffffffffffffffffff16600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16141561094e578190506109b1565b600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1690505b919050565b3373ffffffffffffffffffffffffffffffffffffffff166109d6836108b1565b73ffffffffffffffffffffffffffffffffffffffff1614610a5f576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252600f8152602001807f4e6f7420746865206d616e61676572000000000000000000000000000000000081525060200191505060405180910390fd5b8173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614610a985780610a9b565b60005b600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff167f605c2dbf762e5f7d60a546d42e7205dcb1b011ebc62a61736a57c9089d3a435060405160405180910390a35050565b6000828260405160200180838380828437808301925050509250505060405160208183030381529060405280519060200120905092915050565b610bba8282610e0c565b610bc5576000610bc7565b815b6000808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506001600260008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060006101000a81548160ff0219169083151502179055505050565b600080600073ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff1614610d5b5783610d5d565b335b9050610d688361103a565b15610d92576000839050610d7c8282610ec1565b610d87576000610d89565b815b92505050610e06565b6000808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600084815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169150505b92915050565b6000806000610e22856301ffc9a760e01b61106a565b80925081935050506000821480610e395750600081145b15610e4957600092505050610ebb565b610e5a8563ffffffff60e01b61106a565b80925081935050506000821480610e72575060008114155b15610e8257600092505050610ebb565b610e8c858561106a565b8092508193505050600182148015610ea45750600181145b15610eb457600192505050610ebb565b6000925050505b92915050565b6000600260008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060009054906101000a900460ff16610f7457610f6d8383610e0c565b9050611034565b8273ffffffffffffffffffffffffffffffffffffffff166000808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000847bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161490505b92915050565b60008060001b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff60001b8316149050919050565b60008060006301ffc9a760e01b905060405181815284600482015260208160248389617530fa9350805192505050925092905056fea265627a7a72315820a60645b7816195bf36f280acf95c577c3fe1f100f10ca47909ebc5a3377373a964736f6c63430005110032",
+	"sourceMap": "3706:9232:4:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;3706:9232:4;;;;;;;",
+	"sourceCodes": "/* ERC1820 Pseudo-introspection Registry Contract\n * This standard defines a universal registry smart contract where any address (contract or regular account) can\n * register which interface it supports and which smart contract is responsible for its implementation.\n *\n * Written in 2019 by Jordi Baylina and Jacques Dafflon\n *\n * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to\n * this software to the public domain worldwide. This software is distributed without any warranty.\n *\n * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see\n * <http://creativecommons.org/publicdomain/zero/1.0/>.\n *\n *    ███████╗██████╗  ██████╗ ██╗ █████╗ ██████╗  ██████╗\n *    ██╔════╝██╔══██╗██╔════╝███║██╔══██╗╚════██╗██╔═████╗\n *    █████╗  ██████╔╝██║     ╚██║╚█████╔╝ █████╔╝██║██╔██║\n *    ██╔══╝  ██╔══██╗██║      ██║██╔══██╗██╔═══╝ ████╔╝██║\n *    ███████╗██║  ██║╚██████╗ ██║╚█████╔╝███████╗╚██████╔╝\n *    ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝ ╚════╝ ╚══════╝ ╚═════╝\n *\n *    ██████╗ ███████╗ ██████╗ ██╗███████╗████████╗██████╗ ██╗   ██╗\n *    ██╔══██╗██╔════╝██╔════╝ ██║██╔════╝╚══██╔══╝██╔══██╗╚██╗ ██╔╝\n *    ██████╔╝█████╗  ██║  ███╗██║███████╗   ██║   ██████╔╝ ╚████╔╝\n *    ██╔══██╗██╔══╝  ██║   ██║██║╚════██║   ██║   ██╔══██╗  ╚██╔╝\n *    ██║  ██║███████╗╚██████╔╝██║███████║   ██║   ██║  ██║   ██║\n *    ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝\n *\n */\npragma solidity ^0.5.8;\n// IV is value needed to have a vanity address starting with '0x1820'.\n// IV: 53759\n\n/// @dev The interface a contract MUST implement if it is the implementer of\n/// some (other) interface for any address other than itself.\ninterface ERC1820ImplementerInterface {\n    /// @notice Indicates whether the contract implements the interface 'interfaceHash' for the address 'addr' or not.\n    /// @param interfaceHash keccak256 hash of the name of the interface\n    /// @param addr Address for which the contract will implement the interface\n    /// @return ERC1820_ACCEPT_MAGIC only if the contract implements 'interfaceHash' for the address 'addr'.\n    function canImplementInterfaceForAddress(bytes32 interfaceHash, address addr) external view returns(bytes32);\n}\n\n\n/// @title ERC1820 Pseudo-introspection Registry Contract\n/// @author Jordi Baylina and Jacques Dafflon\n/// @notice This contract is the official implementation of the ERC1820 Registry.\n/// @notice For more details, see https://eips.ethereum.org/EIPS/eip-1820\ncontract ERC1820Registry {\n    /// @notice ERC165 Invalid ID.\n    bytes4 constant internal INVALID_ID = 0xffffffff;\n    /// @notice Method ID for the ERC165 supportsInterface method (= `bytes4(keccak256('supportsInterface(bytes4)'))`).\n    bytes4 constant internal ERC165ID = 0x01ffc9a7;\n    /// @notice Magic value which is returned if a contract implements an interface on behalf of some other address.\n    bytes32 constant internal ERC1820_ACCEPT_MAGIC = keccak256(abi.encodePacked(\"ERC1820_ACCEPT_MAGIC\"));\n\n    /// @notice mapping from addresses and interface hashes to their implementers.\n    mapping(address => mapping(bytes32 => address)) internal interfaces;\n    /// @notice mapping from addresses to their manager.\n    mapping(address => address) internal managers;\n    /// @notice flag for each address and erc165 interface to indicate if it is cached.\n    mapping(address => mapping(bytes4 => bool)) internal erc165Cached;\n\n    /// @notice Indicates a contract is the 'implementer' of 'interfaceHash' for 'addr'.\n    event InterfaceImplementerSet(address indexed addr, bytes32 indexed interfaceHash, address indexed implementer);\n    /// @notice Indicates 'newManager' is the address of the new manager for 'addr'.\n    event ManagerChanged(address indexed addr, address indexed newManager);\n\n    /// @notice Query if an address implements an interface and through which contract.\n    /// @param _addr Address being queried for the implementer of an interface.\n    /// (If '_addr' is the zero address then 'msg.sender' is assumed.)\n    /// @param _interfaceHash Keccak256 hash of the name of the interface as a string.\n    /// E.g., 'web3.utils.keccak256(\"ERC777TokensRecipient\")' for the 'ERC777TokensRecipient' interface.\n    /// @return The address of the contract which implements the interface '_interfaceHash' for '_addr'\n    /// or '0' if '_addr' did not register an implementer for this interface.\n    function getInterfaceImplementer(address _addr, bytes32 _interfaceHash) external view returns (address) {\n        address addr = _addr == address(0) ? msg.sender : _addr;\n        if (isERC165Interface(_interfaceHash)) {\n            bytes4 erc165InterfaceHash = bytes4(_interfaceHash);\n            return implementsERC165Interface(addr, erc165InterfaceHash) ? addr : address(0);\n        }\n        return interfaces[addr][_interfaceHash];\n    }\n\n    /// @notice Sets the contract which implements a specific interface for an address.\n    /// Only the manager defined for that address can set it.\n    /// (Each address is the manager for itself until it sets a new manager.)\n    /// @param _addr Address for which to set the interface.\n    /// (If '_addr' is the zero address then 'msg.sender' is assumed.)\n    /// @param _interfaceHash Keccak256 hash of the name of the interface as a string.\n    /// E.g., 'web3.utils.keccak256(\"ERC777TokensRecipient\")' for the 'ERC777TokensRecipient' interface.\n    /// @param _implementer Contract address implementing '_interfaceHash' for '_addr'.\n    function setInterfaceImplementer(address _addr, bytes32 _interfaceHash, address _implementer) external {\n        address addr = _addr == address(0) ? msg.sender : _addr;\n        require(getManager(addr) == msg.sender, \"Not the manager\");\n\n        require(!isERC165Interface(_interfaceHash), \"Must not be an ERC165 hash\");\n        if (_implementer != address(0) && _implementer != msg.sender) {\n            require(\n                ERC1820ImplementerInterface(_implementer)\n                    .canImplementInterfaceForAddress(_interfaceHash, addr) == ERC1820_ACCEPT_MAGIC,\n                \"Does not implement the interface\"\n            );\n        }\n        interfaces[addr][_interfaceHash] = _implementer;\n        emit InterfaceImplementerSet(addr, _interfaceHash, _implementer);\n    }\n\n    /// @notice Sets '_newManager' as manager for '_addr'.\n    /// The new manager will be able to call 'setInterfaceImplementer' for '_addr'.\n    /// @param _addr Address for which to set the new manager.\n    /// @param _newManager Address of the new manager for 'addr'. (Pass '0x0' to reset the manager to '_addr'.)\n    function setManager(address _addr, address _newManager) external {\n        require(getManager(_addr) == msg.sender, \"Not the manager\");\n        managers[_addr] = _newManager == _addr ? address(0) : _newManager;\n        emit ManagerChanged(_addr, _newManager);\n    }\n\n    /// @notice Get the manager of an address.\n    /// @param _addr Address for which to return the manager.\n    /// @return Address of the manager for a given address.\n    function getManager(address _addr) public view returns(address) {\n        // By default the manager of an address is the same address\n        if (managers[_addr] == address(0)) {\n            return _addr;\n        } else {\n            return managers[_addr];\n        }\n    }\n\n    /// @notice Compute the keccak256 hash of an interface given its name.\n    /// @param _interfaceName Name of the interface.\n    /// @return The keccak256 hash of an interface name.\n    function interfaceHash(string calldata _interfaceName) external pure returns(bytes32) {\n        return keccak256(abi.encodePacked(_interfaceName));\n    }\n\n    /* --- ERC165 Related Functions --- */\n    /* --- Developed in collaboration with William Entriken. --- */\n\n    /// @notice Updates the cache with whether the contract implements an ERC165 interface or not.\n    /// @param _contract Address of the contract for which to update the cache.\n    /// @param _interfaceId ERC165 interface for which to update the cache.\n    function updateERC165Cache(address _contract, bytes4 _interfaceId) external {\n        interfaces[_contract][_interfaceId] = implementsERC165InterfaceNoCache(\n            _contract, _interfaceId) ? _contract : address(0);\n        erc165Cached[_contract][_interfaceId] = true;\n    }\n\n    /// @notice Checks whether a contract implements an ERC165 interface or not.\n    //  If the result is not cached a direct lookup on the contract address is performed.\n    //  If the result is not cached or the cached value is out-of-date, the cache MUST be updated manually by calling\n    //  'updateERC165Cache' with the contract address.\n    /// @param _contract Address of the contract to check.\n    /// @param _interfaceId ERC165 interface to check.\n    /// @return True if '_contract' implements '_interfaceId', false otherwise.\n    function implementsERC165Interface(address _contract, bytes4 _interfaceId) public view returns (bool) {\n        if (!erc165Cached[_contract][_interfaceId]) {\n            return implementsERC165InterfaceNoCache(_contract, _interfaceId);\n        }\n        return interfaces[_contract][_interfaceId] == _contract;\n    }\n\n    /// @notice Checks whether a contract implements an ERC165 interface or not without using nor updating the cache.\n    /// @param _contract Address of the contract to check.\n    /// @param _interfaceId ERC165 interface to check.\n    /// @return True if '_contract' implements '_interfaceId', false otherwise.\n    function implementsERC165InterfaceNoCache(address _contract, bytes4 _interfaceId) public view returns (bool) {\n        uint256 success;\n        uint256 result;\n\n        (success, result) = noThrowCall(_contract, ERC165ID);\n        if (success == 0 || result == 0) {\n            return false;\n        }\n\n        (success, result) = noThrowCall(_contract, INVALID_ID);\n        if (success == 0 || result != 0) {\n            return false;\n        }\n\n        (success, result) = noThrowCall(_contract, _interfaceId);\n        if (success == 1 && result == 1) {\n            return true;\n        }\n        return false;\n    }\n\n    /// @notice Checks whether the hash is a ERC165 interface (ending with 28 zeroes) or not.\n    /// @param _interfaceHash The hash to check.\n    /// @return True if '_interfaceHash' is an ERC165 interface (ending with 28 zeroes), false otherwise.\n    function isERC165Interface(bytes32 _interfaceHash) internal pure returns (bool) {\n        return _interfaceHash & 0x00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF == 0;\n    }\n\n    /// @dev Make a call on a contract without throwing if the function does not exist.\n    function noThrowCall(address _contract, bytes4 _interfaceId)\n        internal view returns (uint256 success, uint256 result)\n    {\n        bytes4 erc165ID = ERC165ID;\n\n        assembly {\n            let x := mload(0x40)               // Find empty storage location using \"free memory pointer\"\n            mstore(x, erc165ID)                // Place signature at beginning of empty storage\n            mstore(add(x, 0x04), _interfaceId) // Place first argument directly next to signature\n\n            success := staticcall(\n                30000,                         // 30k gas\n                _contract,                     // To addr\n                x,                             // Inputs are stored at location x\n                0x24,                          // Inputs are 36 (4 + 32) bytes long\n                x,                             // Store output over input (saves space)\n                0x20                           // Outputs are 32 bytes long\n            )\n\n            result := mload(x)                 // Load the result\n        }\n    }\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

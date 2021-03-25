@@ -1,0 +1,140 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "IShield",
+	"abi": [
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_verifier",
+					"type": "address"
+				}
+			],
+			"name": "changeVerifier",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "close",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "uint256[]",
+					"name": "",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_newMSACommitment",
+					"type": "bytes32"
+				}
+			],
+			"name": "createMSA",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "uint256[]",
+					"name": "",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"name": "createPO",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "getVerifier",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x",
+	"source": "pragma solidity ^0.5.8;\n\ninterface IShield {\n    function close() external returns (bool);\n    function changeVerifier(address _verifier) external returns (bool);\n    function getVerifier() external view returns (address);\n    function createMSA(\n        uint256[] calldata,\n        uint256[] calldata,\n        bytes32 _newMSACommitment\n    ) external returns (bool);\n    function createPO(\n        uint256[] calldata,\n        uint256[] calldata,\n        bytes32,\n        bytes32,\n        bytes32,\n        bytes32\n    ) external returns(bool);\n\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

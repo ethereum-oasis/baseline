@@ -1,0 +1,55 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "ERC165Compatible",
+	"abi": [
+		{
+			"inputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "setInterfaces",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "bytes4",
+					"name": "interfaceID",
+					"type": "bytes4"
+				}
+			],
+			"name": "supportsInterface",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		}
+	],
+	"bytecode": "0x608060405234801561001057600080fd5b506100276301ffc9a760e01b61003b60201b60201c565b61003561014360201b60201c565b506101b8565b63ffffffff60e01b817bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191614156100d7576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601c8152602001807f4552433136353a20696e76616c696420696e746572666163652069640000000081525060200191505060405180910390fd5b6001600080837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b600060018060006301ffc9a760e01b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060006101000a81548160ff02191690831515021790555090565b6101d4806101c76000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c806301ffc9a71461003b578063fca85eb3146100a0575b600080fd5b6100866004803603602081101561005157600080fd5b8101908080357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff191690602001909291905050506100c2565b604051808215151515815260200191505060405180910390f35b6100a861012a565b604051808215151515815260200191505060405180910390f35b600060016000837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060009054906101000a900460ff169050919050565b600060018060006301ffc9a760e01b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190815260200160002060006101000a81548160ff0219169083151502179055509056fea265627a7a72315820e95a445baa8303ba0a297ec8fc293021dc05831440e04408f3e2f1750c82994864736f6c63430005110032",
+	"sourceMap": "48:792:2:-;;;141:53;8:9:-1;5:2;;;30:1;27;20:12;5:2;141:53:2;718:40:1;385:10;737:20;;718:18;;;:40;;:::i;:::-;172:15:2;:13;;;:15;;:::i;:::-;;48:792;;1442:190:1;1532:10;1517:25;;:11;:25;;;;;1509:66;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1621:4;1585:20;:33;1606:11;1585:33;;;;;;;;;;;;;;;;;;:40;;;;;;;;;;;;;;;;;;1442:190;:::o;200:123:2:-;241:4;312;257:19;:52;277:31;;;257:52;;;;;;;;;;;;;;;;;;:59;;;;;;;;;;;;;;;;;;200:123;:::o;48:792::-;;;;;;;",
+	"source": "pragma solidity ^0.5.8;\nimport \"./ERC165.sol\";\n\ncontract ERC165Compatible is ERC165 {\n    mapping (bytes4 => bool) supportedInterfaces;\n\n    constructor() public {\n        setInterfaces();\n    }\n\n    function setInterfaces() public returns (bool) {\n        supportedInterfaces[this.supportsInterface.selector] = true;\n    }\n\n    /// @notice Query if a contract implements an interface\n    /// @param interfaceID The interface identifier, as specified in ERC-165\n    /// @dev Interface identification is specified in ERC-165. This function\n    ///  uses less than 30,000 gas.\n    /// @return `true` if the contract implements `interfaceID` and\n    ///  `interfaceID` is not 0xffffffff, `false` otherwise\n    function supportsInterface(bytes4 interfaceID) external view returns (bool){\n        return supportedInterfaces[interfaceID];\n    }\n}\n",
+	"compiler": {
+		"name": "solc",
+		"version": "soljson-v0.5.17+commit.d19bba13.js"
+	}
+}

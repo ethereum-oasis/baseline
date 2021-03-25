@@ -1,0 +1,47 @@
+splunk:
+  conf:
+    indexes:
+      directory: /opt/splunk/etc/apps/search/local
+      content:
+        eth_metrics:
+          coldPath: $SPLUNK_DB/eth_metrics/colddb
+          datatype: metric
+          homePath: $SPLUNK_DB/eth_metrics/db
+          maxTotalDataSizeMB: 512000
+          thawedPath: $SPLUNK_DB/eth_metrics/thaweddb
+        cadvisor_metrics:
+          coldPath: $SPLUNK_DB/cadvisor_metrics/colddb
+          datatype: metric
+          homePath: $SPLUNK_DB/cadvisor_metrics/db
+          maxTotalDataSizeMB: 512000
+          thawedPath: $SPLUNK_DB/cadvisor_metrics/thaweddb
+        syslog:
+          coldPath: $SPLUNK_DB/syslog/colddb
+          datatype: event
+          homePath: $SPLUNK_DB/syslog/db
+          maxTotalDadtaSizeMB: 512000
+          thawedPath: $SPLUNK_DB/syslog/thaweddb
+        logs:
+          coldPath: $SPLUNK_DB/logs/colddb
+          datatype: event
+          homePath: $SPLUNK_DB/logs/db
+          maxTotalDadtaSizeMB: 512000
+          thawedPath: $SPLUNK_DB/logs/thaweddb
+    inputs:
+      directory: /opt/splunk/etc/apps/search/local
+      content:
+        "udp://8125":
+          connection_host: ip
+          index: cadvisor_metrics
+          sourcetype: statsd
+        "udp://8514":
+          connection_host: ip
+          index: syslog
+        "logs://cadivsor":
+          index: logs
+          disabled: 0
+    props:
+      directory: /opt/splunk/etc/apps/search/local
+      content:
+        ethlogger:
+          EXTRACT-log_ethlogger: ethlogger-[a-f0-9]{12}.*ethlogger:(?P<log_ethlogger>.*)
