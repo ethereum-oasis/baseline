@@ -1,13 +1,14 @@
 const { ethers, utils } = require('ethers');
 const { BigNumber } = require('ethers/utils');
 const { logger } = require('radish34-logger');
+import { IBlockchainService} from '@baseline-protocol/api';
 
 let instance = null;
 let networkId = null;
 
 const getProvider = uri => {
   if (instance) return instance;
-  instance = new ethers.providers.JsonRpcProvider(uri);
+  instance = new IBlockchainService.rpcExec(uri);
   return instance;
 };
 
