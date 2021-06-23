@@ -33,6 +33,7 @@ contract OrgRegistry is Ownable, ERC165Compatible, Registrar, IOrgRegistry {
     mapping (uint => OrgInterfaces) orgInterfaceMap;
     uint orgInterfaceCount;
 
+    OrgInterfaces[] public orgInterfaceArray;
     Org[] public orgs;
     mapping(address => address) managerMap;
 
@@ -186,7 +187,7 @@ contract OrgRegistry is Ownable, ERC165Compatible, Registrar, IOrgRegistry {
             _shieldAddress,
             _verifierAddress
         );
-      
+
         orgInterfaceCount++;
         return true;
     }
@@ -218,29 +219,14 @@ contract OrgRegistry is Ownable, ERC165Compatible, Registrar, IOrgRegistry {
 
     /// @notice Function to get organization's interface details
     function getInterfaceAddresses() external view returns (
-        bytes32[] memory,
-        address[] memory,
-        address[] memory,
-        address[] memory
+        orgInterfaces[]
     ) {
-        bytes32[] memory gName = new bytes32[](orgInterfaceCount);
-        address[] memory tfAddress = new address[](orgInterfaceCount);
-        address[] memory sAddress = new address[](orgInterfaceCount);
-        address[] memory vrAddress = new address[](orgInterfaceCount);
-
         for (uint i = 0; i < orgInterfaceCount; i++) {
             OrgInterfaces storage orgInterfaces = orgInterfaceMap[i];
-            gName[i] = orgInterfaces.groupName;
-            tfAddress[i] = orgInterfaces.tokenAddress;
-            sAddress[i] = orgInterfaces.shieldAddress;
-            vrAddress[i] = orgInterfaces.verifierAddress;
+            orgInterfaceArray.push(orgInterfaces);
         }
         return (
-            gName,
-            tfAddress,
-            sAddress,
-            vrAddress
+            orgInterfaceArray;
         );
     }
 }
-
