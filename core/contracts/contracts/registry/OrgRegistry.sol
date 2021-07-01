@@ -30,7 +30,9 @@ contract OrgRegistry is Ownable, ERC165Compatible, Registrar, IOrgRegistry {
     }
 
     mapping (address => Org) orgMap;
-    mapping (uint => OrgInterfaces) orgInterfaceMap;
+
+    OrgInterfaces[] public orgInterfaces;
+
     uint orgInterfaceCount;
 
     Org[] public orgs;
@@ -180,11 +182,13 @@ contract OrgRegistry is Ownable, ERC165Compatible, Registrar, IOrgRegistry {
         address _shieldAddress,
         address _verifierAddress
     ) external onlyOwner returns (bool) {
-        orgInterfaceMap[orgInterfaceCount] = OrgInterfaces(
-            _groupName,
-            _tokenAddress,
-            _shieldAddress,
-            _verifierAddress
+        orgInterfaces.push(
+            OrgInterfaces(
+                _groupName,
+                _tokenAddress,
+                _shieldAddress,
+                _verifierAddress
+            )
         );
       
         orgInterfaceCount++;
@@ -218,29 +222,14 @@ contract OrgRegistry is Ownable, ERC165Compatible, Registrar, IOrgRegistry {
 
     /// @notice Function to get organization's interface details
     function getInterfaceAddresses() external view returns (
-        bytes32[] memory,
-        address[] memory,
-        address[] memory,
-        address[] memory
+        OrgInterfaces[] memory
     ) {
-        bytes32[] memory gName = new bytes32[](orgInterfaceCount);
-        address[] memory tfAddress = new address[](orgInterfaceCount);
-        address[] memory sAddress = new address[](orgInterfaceCount);
-        address[] memory vrAddress = new address[](orgInterfaceCount);
+        OrgInterfaces[] memory _orgInterfaces = new OrgInterfaces[](orgInterfaceCount);
 
         for (uint i = 0; i < orgInterfaceCount; i++) {
-            OrgInterfaces storage orgInterfaces = orgInterfaceMap[i];
-            gName[i] = orgInterfaces.groupName;
-            tfAddress[i] = orgInterfaces.tokenAddress;
-            sAddress[i] = orgInterfaces.shieldAddress;
-            vrAddress[i] = orgInterfaces.verifierAddress;
+            _orgInterfaces[i] = orgInterfaces[i];
         }
-        return (
-            gName,
-            tfAddress,
-            sAddress,
-            vrAddress
-        );
+        return _orgInterfaces;
     }
 }
 
