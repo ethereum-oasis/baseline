@@ -1,6 +1,6 @@
 {
   "name": "@baseline-protocol/types",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Baseline core types",
   "license": "CC0 1.0 Universal",
   "main": "./dist/cjs/index.js",

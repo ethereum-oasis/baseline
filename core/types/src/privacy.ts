@@ -4,9 +4,12 @@ export type Circuit = {
   description?: string;
   type?: string;
   provider: string;
+  provingScheme?: string;
   curve?: string;
-  constraintSystem?: string;
   metadata?: object;
+  provingKeyId?: string;
+  verifyingKeyId?: string;
+  verifierContract?: object;
 }
 
 export type Commitment = {

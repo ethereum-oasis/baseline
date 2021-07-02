@@ -1,21 +1,21 @@
 .PHONY: clean reset restart start start-attached stop
 
 clean:
-	docker-compose down --rmi all --volumes --remove-orphans
+	docker-compose -f ./ops/splunk/docker-compose.yml down --rmi all --volumes --remove-orphans
 
 logs:
-	docker-compose logs -f
+	docker-compose -f ./ops/splunk/docker-compose.yml logs -f
 
 reset: stop clean
-	docker-compose up -d --build --force-recreate --remove-orphans
+	docker-compose -f ./ops/splunk/docker-compose.yml up -d --build --force-recreate --remove-orphans
 
 restart: stop start
 
 start:
-	docker-compose up -d --remove-orphans
+	docker-compose -f ./ops/splunk/docker-compose.yml up -d --remove-orphans
 
 start-attached:
-	docker-compose up --remove-orphans
+	docker-compose -f ./ops/splunk/docker-compose.yml up --remove-orphans
 
 stop:
-	docker-compose down --remove-orphans
+	docker-compose -f ./ops/splunk/docker-compose.yml down --remove-orphans

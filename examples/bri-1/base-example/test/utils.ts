@@ -28,6 +28,8 @@ export const baselineAppFactory = async (
   nchainHost,
   networkId,
   vaultHost,
+  privacyHost,
+  baselineHost,
   rcpEndpoint,
   rpcScheme,
   workgroup,
@@ -41,15 +43,19 @@ export const baselineAppFactory = async (
     privateKey: natsPrivateKey,
     publicKey: natsPublicKey,
   };
-  natsConfig.bearerToken = await vendNatsAuthorization(natsConfig, 'baseline.inbound');
+  natsConfig.bearerToken = await vendNatsAuthorization(natsConfig, 'baseline.proxy');
 
   return new ParticipantStack(
     {
+      baselineApiScheme: 'http',
+      baselineApiHost: baselineHost,
       identApiScheme: 'http',
       identApiHost: identHost,
       initiator: initiator,
       nchainApiScheme: 'http',
       nchainApiHost: nchainHost,
+      privacyApiScheme: 'http',
+      privacyApiHost: privacyHost,
       networkId: networkId, // FIXME-- boostrap network genesis if no public testnet faucet is configured...
       orgName: orgName,
       rpcEndpoint: rcpEndpoint,
@@ -95,11 +101,14 @@ export const createUser = async (identHost, firstName, lastName, email, password
 };
 
 export const scrapeInvitationToken = async (container) => {
+  await promisedTimeout(800);
+
   let logs;
   exec(`docker logs ${container}`, (err, stdout, stderr) => {
    logs = stderr.toString();
   });
-  await promisedTimeout(500);
+
+  await promisedTimeout(800);
   const matches = logs.match(/\"dispatch invitation\: (.*)\"/);
   if (matches && matches.length > 0) {
     return matches[matches.length - 1];
@@ -120,7 +129,7 @@ export const vendNatsAuthorization = async (natsConfig, subject): Promise<string
       allow: ['baseline.>'],
     },
     subscribe: {
-      allow: [`baseline.inbound`],
+      allow: [`baseline.proxy`],
     },
   };
 

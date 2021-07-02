@@ -61,3 +61,5 @@ typings/
 
 build/
 dist/
+
+ops/splunk/ops/splunk/alice-ethlogger/.ethlogger-state.json

@@ -1,12 +1,9 @@
 export const messageReservedBitsLength = 512; // reserved bits for future use
 
 export enum Opcode {
-  Baseline = 'BLINE', // workflow-specific
+  Baseline = 'BLINE', // baseline message
   Join = 'JOIN', // join workgroup
-  Ping = 'PING',
-  Pong = 'PONG',
-  Proof = 'PROOF', // generate proof
-  Verify = 'VRFY', // idempotent proof verification
+  Sync = 'SYNC', // synchronize workgroup config
 }
 
 export enum PayloadType {
