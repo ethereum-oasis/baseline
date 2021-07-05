@@ -17,7 +17,7 @@ There is one other way to contribute, and it's the most important: **use the wor
 
 Here is the link to the Baseline Protocol code of conduct:
 
-{% embed url="https://github.com/ethereum-oasis/baseline/blob/master/CODE\_OF\_CONDUCT.md" %}
+<https://github.com/ethereum-oasis/baseline/blob/master/CODE_OF_CONDUCT.md>
 
 ## Technical Contributors <a id="technical-contributors"></a>
 
