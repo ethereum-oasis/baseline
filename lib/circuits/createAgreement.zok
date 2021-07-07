@@ -1,38 +1,20 @@
 import "utils/pack/u32/nonStrictUnpack256" as unpack256
-import "utils/pack/u32/unpack128" as unpack128
-import "hashes/sha256/512bitPacked" as packed512Sha
 import "ecc/edwardsCompress" as edwardsCompress
 import "hashes/sha256/1024bit" as shaOf1024Bits
 import "utils/casts/bool_256_to_u32_8" as bool_256_to_u32_8
+import "./helpers/conversion/field_2_to_u32_8" as field_2_to_u32_8
 
-struct Commitment {
-  field[2] value
-  field[2] salt
-}
-
-struct Metadata {
-  field[2] senderPublicKey
-  field agreementName
-  field agreementUrl
-}
-
-struct Agreement {
-  u32[8] hash
-  field[2] senderPublicKey
-}
-
-def convert(field[2] input) -> u32[8]:
-  u32[4] lsbBits = unpack128(input[0])
-  u32[4] msbBits = unpack128(input[1])
-  return [...msbBits, ...lsbBits]
+from "./types" import Commitment
+from "./types" import Metadata
+from "./types" import Agreement
 
 def main(field publicInputHash, private Commitment inputCommitment, private Metadata inputMetadata) -> Agreement:
   u32[8] publicInputHashBits = unpack256(publicInputHash)
 
   // hash of the below private inputs must be equal to public input
   // Convert inputs to u32
-  u32[8] saltBits = convert(inputCommitment.salt)
-  u32[8] valueBits = convert(inputCommitment.value)
+  u32[8] saltBits = field_2_to_u32_8(inputCommitment.salt)
+  u32[8] valueBits = field_2_to_u32_8(inputCommitment.value)
   bool[256] compressedSenderPubKey = edwardsCompress(inputMetadata.senderPublicKey)
   u32[8] pubKeyBits = bool_256_to_u32_8(compressedSenderPubKey)
   u32[8] nameBits = unpack256(inputMetadata.agreementName)
@@ -46,6 +28,7 @@ def main(field publicInputHash, private Commitment inputCommitment, private Meta
 
   // Prepare output object
   Agreement outputAgreement = Agreement { hash: agreementHash, senderPublicKey: inputMetadata.senderPublicKey }
+
   // To consider:
   // - Formalize agreement struct based on baselineagreement.zok
   // - Pending issue to be resolved: struct within struct unwrapping

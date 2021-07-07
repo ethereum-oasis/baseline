@@ -5,7 +5,7 @@ const noopAgreementCircuitPath = '../../lib/circuits/noopAgreement.zok';
 const createAgreementPath = '../../lib/circuits/createAgreement.zok';
 const createAgreementOwnedPath = '../../lib/circuits/createAgreementOwned.zok';
 const signAgreementPath = '../../lib/circuits/signAgreement.zok';
-const proofOfOwnershipPath = '../../lib/circuits/prove-ownership-of-sk.zok';
+const proofOfOwnershipPath = '../../lib/circuits/proveOwnershipOfSk.zok';
 
 let provider;
 

@@ -1,18 +1,15 @@
 import "signatures/verifyEddsa" as verifyEddsa
 import "ecc/babyjubjubParams" as context
-from "ecc/babyjubjubParams" import BabyJubJubParams
-from "./createAgreement" import Agreement
 
-struct Signature {
-  field[2] R
-  field S
-}
+from "ecc/babyjubjubParams" import BabyJubJubParams
+from "./types" import Agreement
+from "./types" import Signature
 
 // Receive a rawAgreement object, and verift its signature
 // The intent is to capture the witness of the createAgreement circuit and
 // use that as an input to the verification of the agreement signature
-
 def main(private Agreement rawAgreement, private Signature inputSignature) -> bool:
-    BabyJubJubParams ctx = context()
-    bool verified = verifyEddsa(inputSignature.R, inputSignature.S, rawAgreement.senderPublicKey, rawAgreement.hash, rawAgreement.hash, ctx)
-    return verified
+  BabyJubJubParams ctx = context()
+  bool verified = verifyEddsa(inputSignature.R, inputSignature.S, rawAgreement.senderPublicKey, rawAgreement.hash, rawAgreement.hash, ctx)
+
+  return verified

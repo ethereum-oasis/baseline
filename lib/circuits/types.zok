@@ -1,0 +1,20 @@
+struct Signature {
+  field[2] R
+  field S
+}
+
+struct Commitment {
+  field[2] value
+  field[2] salt
+}
+
+struct Agreement {
+  u32[8] hash
+  field[2] senderPublicKey
+}
+
+struct Metadata {
+  field[2] senderPublicKey
+  field agreementName
+  field agreementUrl
+}
