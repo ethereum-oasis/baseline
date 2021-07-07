@@ -1,0 +1,50 @@
+{
+  "name": "@baseline-protocol/privacy",
+  "version": "1.0.0",
+  "description": "Baseline core privacy",
+  "license": "CC0 1.0 Universal",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "unpkg": "./dist/umd/index.min.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:cjs": "./node_modules/.bin/tsc -p tsconfig.cjs.json",
+    "build:umd": "webpack",
+    "build": "npm run clean && npm run build:cjs && npm run build:umd",
+    "clean": "rm -rf ./dist",
+    "test": "./node_modules/.bin/mocha --require esm --require ts-node/register --require global-jsdom/lib/register test/**/*.spec.ts --timeout 30000000000 --unhandled-rejections=strict --max-old-space-size=8192"
+  },
+  "dependencies": {
+    "@baseline-protocol/types": "1.1.0",
+    "@types/uuid": "^8.0.0",
+    "big-integer": "^1.6.48",
+    "hex-to-binary": "^1.0.1",
+    "keccak": "^3.0.1",
+    "provide-js": "^1.5.1",
+    "zokrates-js": "^1.0.25"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.3.4",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^12.0.10",
+    "axios": "^0.19.2",
+    "chai": "^4.2.0",
+    "esm": "^3.2.25",
+    "global-jsdom": "^6.1.0",
+    "jsdom": "^16.2.2",
+    "mocha": "^8.0.1",
+    "serialize-javascript": "^5.0.1",
+    "ts-loader": "^6.0.4",
+    "ts-node": "^8.10.2",
+    "tslint": "5.20.1",
+    "tslint-config-airbnb": "5.11.2",
+    "tslint-config-prettier": "1.18.0",
+    "tslint-plugin-prettier": "2.0.1",
+    "typescript": "^3.5.2",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

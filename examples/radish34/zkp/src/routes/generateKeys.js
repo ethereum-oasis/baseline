@@ -1,68 +1,47 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import zokrates from '@eyblockchain/zokrates.js';
-import { jsonifyVk } from '../utils/jsonifyVk';
-import { saveVerificationKeyToDB } from '../utils/fileToDB';
+
+import { getZokratesService } from '../utils/zokratesService';
 import { logger } from 'radish34-logger';
+import { storeArtifactsByKey } from '../utils/dbUtils';
 
 const router = express.Router();
 
-const publishArtifacts = (artifacts, bearerJWT) => {
-  // FIXME
-};
-
 router.post('/', async (req, res, next) => {
-  req.setTimeout(900000);
-  const { filepath, jwt } = req.body;
   try {
+    const { filepath, scheme } = req.body; // filepath relative to /app/circuits/ or /zkp/circuits/
     const filename = path.basename(filepath, '.zok'); // filename without '.zok'
-    fs.mkdirSync(`./output/${filename}`, { recursive: true });
+    const zokratesService = await getZokratesService();
+    logger.debug('zokratesService = \n%o', zokratesService, { service: 'ZKP' });
+    logger.debug(`filepath = ${filepath}`, { service: 'ZKP' });
 
-    logger.info('Compile.', { service: 'ZKP' });
-    await zokrates.compile(`./circuits/${filepath}`, `./output/${filename}`, `${filename}_out`);
-    const source = fs.readFileSync(`./circuits/${filepath}`);
+    const source = fs.readFileSync(`./circuits/${filepath}`).toString();
+    logger.debug('source = \n%o', source, { service: 'ZKP' });
 
-    logger.info('Setup.', { service: 'ZKP' });
-    await zokrates.setup(
-      `./output/${filename}/${filename}_out`,
-      `./output/${filename}`,
-      `${process.env.PROVING_SCHEME}`,
-      `${filename}_vk`,
-      `${filename}_pk`,
-    );
+    const compilationArtifacts = await zokratesService.compile(source, process.env.ZKP_ENTRYPOINT_LOCATION);
+    logger.debug('compilationArtifacts = \n%o', compilationArtifacts, { service: 'ZKP' });
 
-    logger.info('Format vk.', { service: 'ZKP' });
-    await zokrates.exportVerifier(
-      `./output/${filename}/${filename}_vk.key`,
-      `./output/${filename}`,
-      `Verifier_${filename}.sol`,
-      `${process.env.PROVING_SCHEME}`,
-    );
+    const setupArtifacts = await zokratesService.setup(compilationArtifacts);
+    logger.debug('setupArtifacts = \n%o', setupArtifacts, { service: 'ZKP' });
 
-    const proofRaw = fs.readFileSync(`./output/${filename}/${filename}_out.ztf`);
-    const provingKey = fs.readFileSync(`./output/${filename}/${filename}_pk.key`);
-    const verifierSolc = fs.readFileSync(`./output/${filename}/Verifier_${filename}.sol`);
-    const vkJson = await jsonifyVk(`./output/${filename}/Verifier_${filename}.sol`);
-    const vk = await saveVerificationKeyToDB(filename, JSON.parse(vkJson));
-    logger.info('Complete.\n%o', vk, { service: 'ZKP' });
-    const response = { verificationKey: vk };
+    const verifierContract = await zokratesService.exportVerifier(setupArtifacts.keypair.vk);
+    logger.debug('verifierContract = \n%o', verifierContract, { service: 'ZKP' });
 
     const artifacts = {
-      key_id: filename,
-      proof: proofRaw,
-      proving_key: provingKey,
-      source: source.toString(),
-      verifier_solc: verifierSolc,
-      verification_key: JSON.parse(vkJson),
-    };
+      setupKey: filename,
+      source,
+      compilationArtifacts,
+      setupArtifacts,
+      verifierContract
+    }
 
-    publishArtifacts(artifacts, jwt);
-
+    await storeArtifactsByKey(process.env.MONGO_COLLECTION_SETUP, filename, artifacts);
+    const response = { verificationKey: artifacts.setupArtifacts.keypair.vk };
     return res.send(response);
-  } catch (err) {
-    logger.error('\n%o', { error: err }, { service: 'ZKP' });
-    return next(err);
+  } catch (error) {
+    logger.error('\n%o', { error: error }, { service: 'ZKP' });
+    return next(error);
   }
 });
 

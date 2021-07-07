@@ -110,12 +110,14 @@ services:
       - ./zkp/circuits:/app/circuits:delegated
       - ./zkp/src:/app/src:delegated
       - ./zkp/dist:/app/dist:delegated
-      - ./zkp/output:/app/output:delegated
     environment:
-      PROVING_SCHEME: 'gm17'
+      PROVING_SCHEME: 'g16'
       MONGO_URL: mongodb://mongo-buyer # TODO: radish-zkp's db of proving materials shouldn't depend on the Buyer's mongodb. Each user should probably read proving files from their local disk rather than from a shared mongodb?
       MONGO_DB_NAME: 'radish34'
       MONGO_CONNECTION_RETRIES: 5
+      ZKP_ENTRYPOINT_LOCATION: 'main'
+      MONGO_COLLECTION_SETUP: 'setups'
+      MONGO_COLLECTION_PROOFS: 'proofs'
     depends_on:
       - mongo-buyer # TODO: remove dependency on mongo-buyer.
       - logger

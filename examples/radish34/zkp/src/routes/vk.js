@@ -1,24 +1,24 @@
 import express from 'express';
-import { getVerificationKeyByID } from '../utils/fileToDB';
 import { logger } from 'radish34-logger';
+import { getArtifactsByKey } from '../utils/dbUtils';
 
 const router = express.Router();
 
-/**
- * @param {string} id is the name of the circuit, e.g. 'createMSA'
- */
 router.get('/:id', async (req, res, next) => {
   try {
+    // id is the name of the circuit used as key in mongodb
     const { id } = req.params;
-    const vk = await getVerificationKeyByID(id);
 
-    logger.info('Returning vk.\n%o', vk, { service: 'ZKP'});
+    const artifacts = await getArtifactsByKey(process.env.MONGO_COLLECTION_SETUP, id, true);
+    const vk = artifacts.setupArtifacts.keypair.vk;
+    logger.debug('vk = \n%o', vk, { service: 'ZKP'});
 
+    // FIX: naming to verificationKey { verficationKey: VerificationKey }
     const response = { vk };
     return res.send(response);
-  } catch (err) {
-    logger.error('\n%o', err, { service: 'ZKP' });
-    return next(err);
+  } catch (error) {
+    logger.error('\n%o', error, { service: 'ZKP' });
+    return next(error);
   }
 });
 

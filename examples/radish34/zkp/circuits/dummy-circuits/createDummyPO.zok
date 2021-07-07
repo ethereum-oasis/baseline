@@ -69,8 +69,8 @@ struct NewPO {
   NewCommitment commitment
 }
 
-def main(field publicInputHash, private field[2] secretKeyOfBuyer, private field[2] root, private OldMSA oldMSA, private NewMSA newMSA, private NewPO newPO) -> ():
+def main(field publicInputHash, private field[2] secretKeyOfBuyer, private field[2] root, private OldMSA oldMSA, private NewMSA newMSA, private NewPO newPO):
 
-  oldMSA.constants.publicKeyOfBuyer == newMSA.constants.publicKeyOfBuyer
+  assert(oldMSA.constants.publicKeyOfBuyer == newMSA.constants.publicKeyOfBuyer)
 
   return

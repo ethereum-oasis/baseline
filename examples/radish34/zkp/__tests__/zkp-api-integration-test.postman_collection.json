@@ -237,7 +237,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"docId\": \"test1234\", \n\t\"filename\": \"test\", \n\t\"inputs\": [5, 25]\n}"
+          "raw": "{\n\t\"docId\": \"test1234\", \n\t\"filename\": \"test\", \n\t\"inputs\": [\"5\", \"25\"]\n}"
         },
         "url": {
           "raw": "{{API_URL}}/generate-proof",

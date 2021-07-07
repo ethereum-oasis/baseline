@@ -1,102 +1,91 @@
 import express from 'express';
-import fs from 'fs';
-import zokrates from '@eyblockchain/zokrates.js';
-import { saveProofToDB } from '../utils/fileToDB';
 
-const defaultProvingScheme = 'gm17';
+import { getZokratesService } from '../utils/zokratesService';
+import { logger } from 'radish34-logger';
+import { getArtifactsByKey, storeArtifactsByKey } from '../utils/dbUtils';
 
 const router = express.Router();
 
 router.post('/', async (req, res, next) => {
-  req.setTimeout(900000);
-  const { docId, filename, inputs, scheme, outputDirectoryPath, proofFileName } = req.body;
-  console.log(`\nReceived request to /generateProof`);
-  console.log(req.body);
-
-  const opts = {};
-  opts.createFile = true;
-  opts.directory = `/app/output/${filename}` || outputDirectoryPath;
-  opts.fileName = `${filename}_proof.json` || proofFileName;
-  fs.mkdirSync(opts.directory, { recursive: true });
-
   try {
-    console.log('\nCompute witness...');
-    await zokrates.computeWitness(
-      `/app/output/${filename}/${filename}_out`,
-      `/app/output/${filename}/`,
-      `${filename}_witness`,
-      inputs,
-    );
+    // Proving scheme is not used, since baseline privacy package zokrates-js only supports g16 at the moment
+    const { docId, filename, inputs, scheme } = req.body;
+    logger.debug('filename = \n%o', filename, { service: 'ZKP' });
+    logger.debug('docId = \n%o', docId, { service: 'ZKP' });
+    logger.debug('inputs = \n%o', inputs, { service: 'ZKP' });
 
-    console.log('\nGenerate proof...');
-    await zokrates.generateProof(
-      `/app/output/${filename}/${filename}_pk.key`,
-      `/app/output/${filename}/${filename}_out`,
-      `/app/output/${filename}/${filename}_witness`,
-      `${scheme || process.env.PROVING_SCHEME || defaultProvingScheme}`,
-      opts,
-    );
-    const storedProof = await saveProofToDB(
-      docId,
-      filename,
-      `/app/output/${filename}/${filename}_proof.json`,
-    );
+    const zokratesService = await getZokratesService();
+    logger.debug('zokratesService = \n%o', zokratesService, { service: 'ZKP' });
 
-    console.log(`\nComplete`);
-    console.log(`\nResponding with proof:`);
-    console.log(storedProof);
-    return res.send(storedProof);
-  } catch (err) {
-    return next(err);
+    const artifacts = await getArtifactsByKey(process.env.MONGO_COLLECTION_SETUP, filename, true);
+    logger.debug('artifacts = \n%o', artifacts, { service: 'ZKP' });
+
+    const witnessComputation = await zokratesService.computeWitness(artifacts.compilationArtifacts, inputs);
+    logger.debug('witnessComputation = \n%o', witnessComputation, { service: 'ZKP' });
+
+    const proof = await zokratesService.generateProof(artifacts.compilationArtifacts.program, witnessComputation.witness, artifacts.setupArtifacts.keypair.pk);
+    logger.debug('proof = \n%o', proof, { service: 'ZKP' });
+
+    const proofArtifacts = {
+      proofKey: docId,
+      setupKey: filename,
+      witnessComputation,
+      proof,
+      inputs
+    }
+
+    await storeArtifactsByKey(process.env.MONGO_COLLECTION_PROOFS, docId, proofArtifacts);
+    // FIX: naming
+    return res.send({
+      docID: proofArtifacts.proofKey,
+      verificationKeyID: proofArtifacts.setupKey,
+      proof: proofArtifacts.proof,
+      inputs: proofArtifacts.inputs
+    });
+  } catch (error) {
+    logger.error('\n%o', error, { service: 'ZKP' });
+    return next(error);
   }
 });
 
 router.post('/:circuitId', async (req, res, next) => {
-  req.setTimeout(900000);
-  const { circuitId } = req.params;
-  const { docId, inputs, scheme } = req.body;
-  console.log(`\nReceived request to /generateProof`);
-
-  const timestamp = new Date().getTime();
-  const witnessFilename = `${circuitId}-${timestamp}_witness`;
-  const proofFilename = `${circuitId}-${timestamp}_proof.json`;
-
-  const opts = {};
-  opts.createFile = true;
-  opts.directory = `/app/output/${circuitId}/${timestamp}`;
-  opts.fileName = proofFilename;
-  fs.mkdirSync(opts.directory, { recursive: true });
-
   try {
-    console.log('\nCompute witness...');
-    await zokrates.computeWitness(
-      `/app/output/${circuitId}/${circuitId}_out`,
-      `/app/output/${circuitId}/${timestamp}`,
-      witnessFilename,
-      inputs,
-    );
+    const { circuitId } = req.params;
+    const { docId, inputs, scheme } = req.body;
+    logger.debug('circuitId = \n%o', circuitId, { service: 'ZKP' });
+    logger.debug('docId = \n%o', docId, { service: 'ZKP' });
+    logger.debug('inputs = \n%o', inputs, { service: 'ZKP' });
 
-    console.log('\nGenerate proof...');
-    await zokrates.generateProof(
-      `/app/output/${circuitId}/${circuitId}_pk.key`,
-      `/app/output/${circuitId}/${circuitId}_out`,
-      `/app/output/${circuitId}/${timestamp}/${witnessFilename}`,
-      `${scheme || process.env.PROVING_SCHEME || defaultProvingScheme}`,
-      opts,
-    );
+    const zokratesService = await getZokratesService();
+    logger.debug('zokratesService = \n%o', zokratesService, { service: 'ZKP' });
 
-    const proof = await saveProofToDB(
-      docId,
-      circuitId,
-      `/app/output/${circuitId}/${timestamp}/${proofFilename}`,
-    );
+    const artifacts = await getArtifactsByKey(process.env.MONGO_COLLECTION_SETUP, circuitId, true);
+    logger.debug('artifacts = \n%o', artifacts, { service: 'ZKP' });
 
-    console.log(`\nComplete`);
-    console.log(`\nResponding with proof:`);
-    console.log(proof);
-    return res.send(proof);
-  } catch (err) {
-    return next(err);
+    const witnessComputation = await zokratesService.computeWitness(artifacts.compilationArtifacts, inputs);
+    logger.debug('witnessComputation = \n%o', witnessComputation, { service: 'ZKP' });
+
+    const proof = await zokratesService.generateProof(artifacts.compilationArtifacts.program, witnessComputation.witness, artifacts.setupArtifacts.keypair.pk);
+    logger.debug('proof = \n%o', proof, { service: 'ZKP' });
+
+    const proofArtifacts = {
+      proofKey: docId,
+      setupKey: circuitId,
+      witnessComputation,
+      proof,
+      inputs
+    }
+
+    await storeArtifactsByKey(process.env.MONGO_COLLECTION_PROOFS, docId, proofArtifacts);
+    return res.send({
+      docID: proofArtifacts.proofKey,
+      verificationKeyID: proofArtifacts.setupKey,
+      proof: proofArtifacts.proof,
+      inputs: proofArtifacts.inputs
+    });
+  } catch (error) {
+    logger.error('\n%o', error, { service: 'ZKP' });
+    return next(error);
   }
 });
 
