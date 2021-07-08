@@ -1,0 +1,36 @@
+{
+  "contracts": {
+    "softwares/zether/packages/protocol/contracts/Utils.sol": {
+      "source": "softwares/zether/packages/protocol/contracts/Utils.sol:Utils",
+      "abi": [
+        {
+          "name": "GROUP_ORDER",
+          "type": "function",
+          "payable": false,
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "indexed": false
+            }
+          ],
+          "constant": true,
+          "anonymous": false
+        }
+      ],
+      "bin": "60f7610025600b82828239805160001a60731461001857fe5b30600052607381538281f3fe7300000000000000000000000000000000000000003014608060405260043610604f577c010000000000000000000000000000000000000000000000000000000060003504638e692fa181146054575b600080fd5b605a606e565b60405160659190609f565b60405180910390f35b7f30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f000000181565b60998160b1565b82525050565b6020810160ab82846092565b92915050565b9056fea365627a7a7231582039b233689525506f1e766eb94580d65804fca59545688968eae97d1629b889796c6578706572696d656e74616cf564736f6c634300050b0040",
+      "binhash": "71293f0035110a7ca37cf794609096462136d1ff3c67a69baa61299473e87efe",
+      "name": "Utils",
+      "deployName": "softwares/zether/packages/protocol/contracts/Utils.sol",
+      "address": "7b3bd40077b24ea2afebe95e30ac767590080033",
+      "txid": "7331d582aaaa98a4962eb7c7b027bfdb2420cde8eb0a8685c606806d55bfc418",
+      "createdAt": "2019-09-06T01:47:42.613346145+08:00",
+      "confirmed": true,
+      "sender": "qTpsU6JtGroSphv2GfYR6xFGZ7YTqY89JB",
+      "senderHex": "709f2163c777177b1a7c4f54f75b7c2f97073e4f"
+    }
+  },
+  "libraries": {},
+  "related": {}
+}

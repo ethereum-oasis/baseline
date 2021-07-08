@@ -1,0 +1,20 @@
+{
+  "name": "zether",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "workspaces": [
+    "packages/**"
+  ],
+  "devDependencies": {
+    "eslint-import-resolver-lerna": "^1.1.0",
+    "lerna": "3.14.0",
+    "openzeppelin-solidity": "^2.2.0"
+  },
+  "dependencies": {
+    "bn.js": "^4.11.8",
+    "web3": "^2.0.0-alpha.1",
+    "qtumjs": "^1.9.3",
+    "elliptic": "^6.5.0"
+  }
+}

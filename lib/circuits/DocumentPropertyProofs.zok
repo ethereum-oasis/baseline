@@ -1,0 +1,89 @@
+import "utils/pack/unpack256.code"
+import "hashes/sha256/512bitPadded.code" as sha256
+import "signatures/verifyEddsa.code"
+import "ecc/babyjubjubParams.code" as c
+
+def pack256(field[256] bits) -> (field):
+
+	field out = 0
+
+	for field j in 0..256 do
+		field i = 256 - (j + 1)
+		out = out + bits[i] * (2 ** j)
+	endfor
+
+    return out
+
+
+// Verifies if a timestamp
+def verifyDocumentProperty(field[2] R, field S, field[2] A, field[256] M0, field[256] M1, private field timestamp, private field eid, private field[256] nonce) -> (field):
+
+    // Unpack packed fields
+    field[256] timestampUnpacked = unpack256(timestamp)
+    field[256] eidUnpacked = unpack256(eid)
+
+    // Hash concatenation of employee id and nonce
+    field[256] MetadataHash = sha256(eidUnpacked,nonce)
+
+    // Hash concatenation of employee hash and timestamp
+    field[256] AuthorHash = sha256(MetadataHash,timestampUnpacked)
+
+    // Check if hash is equal to signed message
+    // We only use the first 256 bit of the message
+    terminalHash == M0
+
+    // Curve parameters for eddsa signature verification
+    field[10] context = c()
+
+    // verify eddsa signature. Will return 1 if successful
+    return verifyEddsa(R, S, A, M0, M1, context)
+
+
+// Takes two signatures with their respective messages and encoded data:
+// timestamp, nonce, Author and Metadata
+// Verifies that:
+// * public keys of both signatures match
+// * preimage hashes to signed msg
+// * signatures correspond to public key
+// Returns:
+// * Hash of public key used to sign timestamp
+// * Hash of (nonce||nonce1) used by Authro
+// * Worktime = (timestamp1 - timestamp) in seconds
+
+def main( \
+    private field[2] R, \
+    private field S, \
+    field[2] A, \
+    private field[256] M0, \
+    private field[256] M1, \
+    private field timestamp, \
+    field eid, \
+    private field[256] nonce, \
+    private field[2] R1, \
+    private field S1, \
+    private field[2] A1, \
+    private field[256] M01, \
+    private field[256] M11, \
+    private field timestamp1, \
+    field eid1, \
+    private field[256] nonce1) -> (field, field, field):
+
+    // Check if terminal public keys match
+    A == A1
+
+    // Split Document Property Pubkey in coordinates, unpack and hash
+    field a = A[0]
+    field b = A[1]
+
+    field pubKeyHash = pack256(sha256(unpack256(a),unpack256(b)))
+
+    // Create hash of nonces
+    field nonceHash = pack256(sha256(nonce,nonce1))
+
+    field isVerified = verifyDocumentProperty(R, S, A, M0, M1, timestamp, eid, nonce)
+    isVerified == 1
+
+    field isVerified1 = verifyDocumentProperty(R1, S1, A1, M01, M11, timestamp1, eid1, nonce1)
+    isVerified1 == 1
+
+    return pubKeyHash, nonceHash, timestamp1 - timestamp

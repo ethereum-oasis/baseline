@@ -1,0 +1,20 @@
+{
+  "plugins": ["plugins/markdown"],
+  "recurseDepth": 10,
+  "source": {
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_",
+    "include": ["./"],
+    "exclude": ["lib", "node_modules"]
+  },
+  "sourceType": "module",
+  "templates": {
+    "disableSort": false,
+    "collapse": true
+  },
+  "opts": {
+    "private": true,
+    "recurse": true,
+    "encoding": "utf-8"
+  }
+}
