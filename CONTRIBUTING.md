@@ -23,4 +23,4 @@ Follow these steps when submitting a pull request:
 
 Anyone can do a pull request and commit. In order for your work to be merged, you will need to sign the eCLA (entity contributor agreement) if you are contributing on behalf of your company, or iCLA (individual contributor agreement) if you are just contributing for yourself. [Learn more about the eCLA here.](https://www.oasis-open.org/resources/projects/cla/projects-entity-cla)
 
-The iCLA is administered by a bot which will comment on your PR and direct you to sign the iCLA if you haven’t previously done so. This happens automatically when people submit a pull request, or they can access directly by going to [https://cla-assistant.io/ethereum-oasis/baseline](https://cla-assistant.io/ethereum-oasis/baseline)
+The iCLA is administered by a bot which will comment on your PR and direct you to sign the iCLA if you haven’t previously done so. This happens automatically when people submit a pull request, or they can access directly by going to [https://cla-assistant.io/eea-oasis/baseline](https://cla-assistant.io/eea-oasis/baseline)
