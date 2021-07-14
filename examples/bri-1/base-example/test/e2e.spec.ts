@@ -18,22 +18,25 @@ import {
 } from './utils';
 
 const aliceCorpName = 'Alice Corp';
+const aliceDomain = 'alice.baseline.local';
+
 const bobCorpName = 'Bob Corp';
+const bobDomain = 'bob.baseline.local';
 
 const ropstenNetworkId = '66d44f30-9092-4182-a3c4-bc02736d6ae5';
 const kovanNetworkId = '8d31bf48-df6b-4a71-9d7c-3cb291111e27';
 const goerliNetworkId = '1b16996e-3595-4985-816c-043345d22f8c';
-const networkId = process.env['NCHAIN_NETWORK_ID'] || ropstenNetworkId;
+const networkId = process.env['NCHAIN_NETWORK_ID'] || kovanNetworkId;
 
 const setupUser = async (identHost, firstname, lastname, email, password) => {
   const user = (await createUser(identHost, firstname, lastname, email, password));
   const auth = await authenticateUser(identHost, email, password);
-  const bearerToken = auth.token.token;
-  assert(bearerToken, `failed to authorize bearer token for user ${email}`);
-  return [user, bearerToken];
+  const token = JSON.parse(JSON.stringify(auth.token));
+  assert(token.access_token, `failed to authorize bearer token for user ${email}`);
+  return [user, token.access_token, token.refresh_token];
 };
 
-describe('baseline', () => {
+describe('Baseline', () => {
   let bearerTokens; // user API credentials
 
   let alice;
@@ -76,8 +79,10 @@ describe('baseline', () => {
     const natsPublicKey = '-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAullT/WoZnxecxKwQFlwE\n9lpQrekSD+txCgtb9T3JvvX/YkZTYkerf0rssQtrwkBlDQtm2cB5mHlRt4lRDKQy\nEA2qNJGM1Yu379abVObQ9ZXI2q7jTBZzL/Yl9AgUKlDIAXYFVfJ8XWVTi0l32Vsx\ntJSd97hiRXO+RqQu5UEr3jJ5tL73iNLp5BitRBwa4KbDCbicWKfSH5hK5DM75EyM\nR/SzR3oCLPFNLs+fyc7zH98S1atglbelkZsMk/mSIKJJl1fZFVCUxA+8CaPiKbpD\nQLpzydqyrk/y275aSU/tFHidoewvtWorNyFWRnefoWOsJFlfq1crgMu2YHTMBVtU\nSJ+4MS5D9fuk0queOqsVUgT7BVRSFHgDH7IpBZ8s9WRrpE6XOE+feTUyyWMjkVgn\ngLm5RSbHpB8Wt/Wssy3VMPV3T5uojPvX+ITmf1utz0y41gU+iZ/YFKeNN8WysLxX\nAP3Bbgo+zNLfpcrH1Y27WGBWPtHtzqiafhdfX6LQ3/zXXlNuruagjUohXaMltH+S\nK8zK4j7n+BYl+7y1dzOQw4CadsDi5whgNcg2QUxuTlW+TQ5VBvdUl9wpTSygD88H\nxH2b0OBcVjYsgRnQ9OZpQ+kIPaFhaWChnfEArCmhrOEgOnhfkr6YGDHFenfT3/RA\nPUl1cxrvY7BHh4obNa6Bf8ECAwEAAQ==\n-----END PUBLIC KEY-----';
 
     aliceApp = await baselineAppFactory(
+      aliceUserToken[1],
+      aliceUserToken[2],
       aliceCorpName,
-      bearerTokens[alice['id']],
+      aliceDomain,
       false,
       'localhost:8081',
       'nats://localhost:4222',
@@ -86,8 +91,15 @@ describe('baseline', () => {
       'localhost:8080',
       networkId,
       'localhost:8082',
-      'nethermind-ropsten.provide.services:8888',
-      'http',
+      'localhost:8084',
+      'localhost:8088',
+      '4228',
+      '4320',
+      '4321',
+      'kovan.poa.network:443',
+      'https',
+      'localhost',
+      '6390',
       null,
       'baseline workgroup',
       null,
@@ -95,8 +107,10 @@ describe('baseline', () => {
     );
 
     bobApp = await baselineAppFactory(
+      bobUserToken[1],
+      bobUserToken[2],
       bobCorpName,
-      bearerTokens[bob['id']],
+      bobDomain,
       true,
       'localhost:8085',
       'nats://localhost:4224',
@@ -105,17 +119,29 @@ describe('baseline', () => {
       'localhost:8086',
       networkId,
       'localhost:8083',
-      'nethermind-ropsten.provide.services:8888',
-      'http',
+      'localhost:8087',
+      'localhost:8089',
+      '4229',
+      '4322',
+      '4323',
+      'kovan.poa.network:443',
+      'https',
+      'localhost',
+      '6391',
       null,
       'baseline workgroup',
       null,
       'forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock',
     );
 
-    bobApp.init();
-    aliceApp.init();
+    await bobApp.init();
+    await aliceApp.init();
   });
+
+  after('close connections',async () =>{
+    await bobApp.disconnect();
+    await aliceApp.disconnect();
+  })
 
   describe('workgroup', () => {
     describe('creation', () => {
@@ -135,14 +161,14 @@ describe('baseline', () => {
         assert(workgroupToken, 'workgroup token should not be null');
       });
 
-      it('should deploy the ERC1820 registry contract for the workgroup', async () => {
+      it('should deploy the global ERC1820 registry contract', async () => {
         const erc1820RegistryContract = await bobApp.requireWorkgroupContract('erc1820-registry');
-        assert(erc1820RegistryContract, 'workgroup ERC1820 registry contract should not be null');
+        assert(erc1820RegistryContract, 'global ERC1820 registry contract should not be null');
       });
 
-      it('should deploy the ERC1820 organization registry contract for the workgroup', async () => {
+      it('should deploy the global ERC1820 organization registry contract', async () => {
         const orgRegistryContract = await bobApp.requireWorkgroupContract('organization-registry');
-        assert(orgRegistryContract, 'workgroup organization registry contract should not be null');
+        assert(orgRegistryContract, 'global organization registry contract should not be null');
       });
     });
 
@@ -157,20 +183,15 @@ describe('baseline', () => {
         assert(workgroupToken, 'workgroup token should not be null');
       });
 
-      describe('workgroup initiator', function () {
-        before(async () => {
-          this.ctx.app = bobApp;
-        });
-
-        describe(`initial workgroup organization: "${bobCorpName}"`, shouldBehaveLikeAnInitialWorkgroupOrganization.bind(this));
-        describe(`workgroup organization: "${bobCorpName}"`, shouldBehaveLikeAWorkgroupOrganization.bind(this));
+      describe('workgroup initiator', () => {
+        describe(`initial workgroup organization: "${bobCorpName}"`, shouldBehaveLikeAnInitialWorkgroupOrganization(() => bobApp));
+        describe(`workgroup organization: "${bobCorpName}"`, shouldBehaveLikeAWorkgroupOrganization(() => bobApp));
       });
 
       describe('inviting participants to the workgroup', function () {
         let inviteToken;
 
         before(async () => {
-          this.ctx.app = aliceApp;
           await bobApp.inviteWorkgroupParticipant(alice.email);
           inviteToken = await scrapeInvitationToken('bob-ident-consumer'); // if configured, ident would have sent an email to Alice
         });
@@ -186,17 +207,13 @@ describe('baseline', () => {
             await aliceApp.acceptWorkgroupInvite(inviteToken, bobApp.getWorkgroupContracts());
           });
 
-          describe(`invited workgroup organization: "${aliceCorpName}"`, shouldBehaveLikeAnInvitedWorkgroupOrganization.bind(this));
-          describe(`workgroup organization: "${aliceCorpName}"`, shouldBehaveLikeAWorkgroupOrganization.bind(this));
-          describe(`workgroup counterparty: "${aliceCorpName}"`, shouldBehaveLikeAWorkgroupCounterpartyOrganization.bind(this));
+          describe(`invited workgroup organization: "${aliceCorpName}"`, shouldBehaveLikeAnInvitedWorkgroupOrganization(() => aliceApp));
+          describe(`workgroup organization: "${aliceCorpName}"`, shouldBehaveLikeAWorkgroupOrganization(() => aliceApp));
+          describe(`workgroup counterparty: "${aliceCorpName}"`, shouldBehaveLikeAWorkgroupCounterpartyOrganization(() => aliceApp));
         });
 
         describe('counterparties post-onboarding', function () {
-          before(async () => {
-            this.ctx.app = bobApp;
-          });
-
-          describe(bobCorpName, shouldBehaveLikeAWorkgroupCounterpartyOrganization.bind(this));
+          describe(bobCorpName, shouldBehaveLikeAWorkgroupCounterpartyOrganization(() => bobApp));
         });
       });
 
@@ -205,7 +222,7 @@ describe('baseline', () => {
           before(async () => {
             const recipient = await aliceApp.resolveOrganizationAddress();
             await bobApp.sendProtocolMessage(recipient, Opcode.Baseline, {
-              id: 'uuidv4()',
+              wid: 'uuidv4()',
               name: 'hello world',
               url: 'proto://deep/link/to/doc',
               rfp_id: null,
@@ -213,12 +230,12 @@ describe('baseline', () => {
           });
 
           it('should increment protocol message tx count for the sender', async () => {
-            assert(bobApp.getProtocolMessagesTx() === 1, 'protocol messages tx should equal 1');
+            assert(bobApp.getProtocolMessagesTx() === 2, 'protocol messages tx should equal 2');
           });
 
           it('should increment protocol message rx count for the recipient', async () => {
             await promisedTimeout(50);
-            assert(aliceApp.getProtocolMessagesRx() === 1, 'protocol messages rx should equal 1');
+            assert(aliceApp.getProtocolMessagesRx() === 2, 'protocol messages rx should equal 2');
           });
         });
       });

@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import * as log from 'loglevel';
 import { Client } from 'pg';
+import { domain } from 'process';
 import { Ident } from 'provide-js';
 import { AuthService } from 'ts-natsutil';
 import { ParticipantStack } from '../src/index';
@@ -13,13 +14,16 @@ export const authenticateUser = async (identHost, email, password) => {
   const auth = await Ident.authenticate({
     email: email,
     password: password,
+    scope: 'offline_access',
   }, 'http', identHost);
   return auth;
 };
 
 export const baselineAppFactory = async (
+  userAccessToken,
+  userRefreshToken,
   orgName,
-  bearerToken,
+  domain,
   initiator,
   identHost,
   natsHost,
@@ -28,8 +32,15 @@ export const baselineAppFactory = async (
   nchainHost,
   networkId,
   vaultHost,
-  rcpEndpoint,
+  privacyHost,
+  baselineHost,
+  baselineMessagingPort,
+  baselineMessagingStreamingPort,
+  baselineMessagingWebsocketPort,
+  rpcEndpoint,
   rpcScheme,
+  redisHost,
+  redisPort,
   workgroup,
   workgroupName,
   workgroupToken,
@@ -41,20 +52,32 @@ export const baselineAppFactory = async (
     privateKey: natsPrivateKey,
     publicKey: natsPublicKey,
   };
-  natsConfig.bearerToken = await vendNatsAuthorization(natsConfig, 'baseline.inbound');
+  natsConfig.bearerToken = await vendNatsAuthorization(natsConfig, 'baseline.proxy');
 
   return new ParticipantStack(
     {
+      baselineApiScheme: 'http',
+      baselineApiHost: baselineHost,
+      baselineMessagingPort: baselineMessagingPort,
+      baselineMessagingStreamingPort: baselineMessagingStreamingPort,
+      baselineMessagingWebsocketPort: baselineMessagingWebsocketPort,
+      domain: domain,
       identApiScheme: 'http',
       identApiHost: identHost,
       initiator: initiator,
       nchainApiScheme: 'http',
       nchainApiHost: nchainHost,
+      privacyApiScheme: 'http',
+      privacyApiHost: privacyHost,
       networkId: networkId, // FIXME-- boostrap network genesis if no public testnet faucet is configured...
       orgName: orgName,
-      rpcEndpoint: rcpEndpoint,
+      rpcEndpoint: rpcEndpoint,
       rpcScheme: rpcScheme,
-      token: bearerToken,
+      redisHost: redisHost,
+      redisPort: redisPort,
+      token: userAccessToken, // HACK
+      userAccessToken: userAccessToken,
+      userRefreshToken: userRefreshToken,
       vaultApiScheme: 'http',
       vaultApiHost: vaultHost,
       vaultSealUnsealKey: vaultSealUnsealKey,
@@ -95,11 +118,14 @@ export const createUser = async (identHost, firstName, lastName, email, password
 };
 
 export const scrapeInvitationToken = async (container) => {
+  await promisedTimeout(800);
+
   let logs;
   exec(`docker logs ${container}`, (err, stdout, stderr) => {
    logs = stderr.toString();
   });
-  await promisedTimeout(500);
+
+  await promisedTimeout(800);
   const matches = logs.match(/\"dispatch invitation\: (.*)\"/);
   if (matches && matches.length > 0) {
     return matches[matches.length - 1];
@@ -120,7 +146,7 @@ export const vendNatsAuthorization = async (natsConfig, subject): Promise<string
       allow: ['baseline.>'],
     },
     subscribe: {
-      allow: [`baseline.inbound`],
+      allow: [`baseline.proxy`],
     },
   };
 

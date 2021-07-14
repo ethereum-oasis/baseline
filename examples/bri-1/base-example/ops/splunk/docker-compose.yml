@@ -5,7 +5,7 @@ x-logging:
   driver: splunk
   options:
     splunk-token: 11111111-1111-1111-1111-1111111111113
-    splunk-url: https://localhost:8088
+    splunk-url: https://localhost:8090
     splunk-index: logs
     splunk-sourcetype: docker
     splunk-insecureskipverify: "true"
@@ -43,6 +43,8 @@ services:
   alice-redis:
     image: redis
     container_name: alice-redis
+    environment:
+      - SYSLOG_ENDPOINT=splunk:8514
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 1m
@@ -61,6 +63,7 @@ services:
     container_name: alice-provide-nats
     command: ["-auth", "testtoken", "-p", "4222", "--remote_syslog", "udp://splunk:8514", "-D", "-V"]
     environment:
+      SYSLOG_ENDPOINT: splunk:8514
       JWT_SIGNER_PUBLIC_KEY: |-
         -----BEGIN PUBLIC KEY-----
         MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAullT/WoZnxecxKwQFlwE
@@ -120,6 +123,7 @@ services:
       - alice-nats-streaming
       - alice-postgres
       - alice-redis
+      - alice-vault
     environment:
       - DATABASE_HOST=alice-postgres
       - DATABASE_NAME=ident_dev
@@ -132,6 +136,10 @@ services:
       - LOG_LEVEL=DEBUG
       - PORT=8080
       - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=corn domain lonely owner media grape hard rough arena knock uncover goddess cinnamon wing actress spring dizzy skill alter pistol funny bind rapid soap
     healthcheck:
       test: ["CMD", "curl", "-f", "http://alice-ident:8080/status"]
       interval: 1m
@@ -153,6 +161,7 @@ services:
       - alice-nats-streaming
       - alice-postgres
       - alice-redis
+      - alice-vault
     environment:
       - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
       - DATABASE_HOST=alice-postgres
@@ -163,13 +172,16 @@ services:
       - NATS_CLIENT_PREFIX=alice-ident-consumer
       - NATS_URL=nats://alice-nats:4222
       - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
-      - PORT=8080
+      - NCHAIN_API_HOST=alice-nchain:8080
+      - NCHAIN_API_SCHEME=http
       - REDIS_HOSTS=alice-redis:6379
       - SYSLOG_ENDPOINT=splunk:8514
-      - VAULT_API_SCHEME=http
       - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=corn domain lonely owner media grape hard rough arena knock uncover goddess cinnamon wing actress spring dizzy skill alter pistol funny bind rapid soap
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://alice-ident:8080/status"] # FIXME
+      test: ["CMD", "curl", "-f", "http://alice-ident:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
@@ -183,6 +195,7 @@ services:
     image: provide/nchain
     container_name: alice-nchain
     depends_on:
+      - alice-ident
       - alice-nats-streaming
       - alice-postgres
       - alice-redis
@@ -191,13 +204,20 @@ services:
       - DATABASE_NAME=nchain_dev
       - DATABASE_USER=nchain
       - DATABASE_PASSWORD=nchain
+      - IDENT_API_HOST=alice-ident:8080
+      - IDENT_API_SCHEME=http
       - LOG_LEVEL=DEBUG
       - NATS_CLIENT_PREFIX=alice-nchain
       - NATS_URL=nats://alice-nats:4222
       - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - PAYMENTS_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImU2OmY3OmQ1OjI0OmUyOjU5OjA2OjJiOmJjOmEyOjhjOjM1OjlkOmNhOjBhOjg3IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjAwNzA5Njg3LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiJkMDIzM2JlZC1iMThkLTRmNGEtODNlYS02MjBmYjdjYTY0NWMiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4wYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJuZXR3b3JrLiouY29ubmVjdG9yLioiLCJuZXR3b3JrLiouc3RhdHVzIiwicGxhdGZvcm0uXHUwMDNlIl19fX0sInBydmQiOnsiYXBwbGljYXRpb25faWQiOiIwYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJleHRlbmRlZCI6eyJwZXJtaXNzaW9ucyI6eyIqIjo1MTB9fSwicGVybWlzc2lvbnMiOjUxMH0sInN1YiI6ImFwcGxpY2F0aW9uOjBjNWE5ZmViLTE2MGMtNGZlMS05MTBlLTE4NzQyZjg2NGJjZSJ9.SUd50x0g6opm2oU9zFMu6rLpc-22WeEi50OByzluBsoV1fCN1INzqHnCJAMLC2myXIDRKaP1Q-MZVAw97hpzuGQjXEY8yobX0Br3DjGADqaM3iJiaD4GB73lZtd2w2jAsy3PDfvEE_dd9SalGA90WLoSUwkEObFxqufj2vnMVuiH1UwUnMawuVGfZPzZ7Wtoe9K4sq0E7qYiND5lgz0tyDnP7FWyd_wHEwjan_AhabgUJA0w5XlUq7AnjHe-NTrCzU_ZTJ6Hdvxy_uNRSOOv4fV4_MVRomqPePBTPXeeLBpjpsVVKSsKGrP3z7oAWclCm21i-9hEvyEeIN3TV71KgYDLaMtHsHZYPdo1WaKdnq49uPVgXbzCsAAWvgjKbOT62VciQVgv1ognm_22gPgxRksrOAhArSUX_LP0NLMxXDGP0TGwx218QgNW4qj6OxQZrBCO5YRl0Lb-mQVZZ2L3AQXk39gvArTnqIQ8aV9hwLeiBqq1qZU7Q77RUHI-yMUfkH3FAy2xQS1AIn7-rM6rCXtjXVUzdjm1_6HrJkDjS20HUFsaqmKacPxlkkCFa08zxsIsuU_h9LY4VdeVHJKnvWUFWy2M6jYvKIJRuF0Dk1PCTLqbiBUmyCnr20qGe5Y8Vc9c3pvuudm6hdk6aGa3zuNOIzftPthPEoUzoG4qZ3c
       - PORT=8080
       - REDIS_HOSTS=alice-redis:6379
       - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=corn domain lonely owner media grape hard rough arena knock uncover goddess cinnamon wing actress spring dizzy skill alter pistol funny bind rapid soap
     healthcheck:
       test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"]
       interval: 1m
@@ -216,6 +236,7 @@ services:
     entrypoint: ./ops/run_consumer.sh
     container_name: alice-nchain-consumer
     depends_on:
+      - alice-ident
       - alice-nats-streaming
       - alice-postgres
       - alice-redis
@@ -225,15 +246,22 @@ services:
       - DATABASE_NAME=nchain_dev
       - DATABASE_USER=nchain
       - DATABASE_PASSWORD=nchain
+      - IDENT_API_HOST=alice-ident:8080
+      - IDENT_API_SCHEME=http
       - LOG_LEVEL=DEBUG
       - NATS_CLIENT_PREFIX=alice-nchain-consumer
       - NATS_URL=nats://alice-nats:4222
       - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
       - NATS_TOKEN=testtoken
+      - PAYMENTS_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImU2OmY3OmQ1OjI0OmUyOjU5OjA2OjJiOmJjOmEyOjhjOjM1OjlkOmNhOjBhOjg3IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjAwNzA5Njg3LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiJkMDIzM2JlZC1iMThkLTRmNGEtODNlYS02MjBmYjdjYTY0NWMiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4wYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJuZXR3b3JrLiouY29ubmVjdG9yLioiLCJuZXR3b3JrLiouc3RhdHVzIiwicGxhdGZvcm0uXHUwMDNlIl19fX0sInBydmQiOnsiYXBwbGljYXRpb25faWQiOiIwYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJleHRlbmRlZCI6eyJwZXJtaXNzaW9ucyI6eyIqIjo1MTB9fSwicGVybWlzc2lvbnMiOjUxMH0sInN1YiI6ImFwcGxpY2F0aW9uOjBjNWE5ZmViLTE2MGMtNGZlMS05MTBlLTE4NzQyZjg2NGJjZSJ9.SUd50x0g6opm2oU9zFMu6rLpc-22WeEi50OByzluBsoV1fCN1INzqHnCJAMLC2myXIDRKaP1Q-MZVAw97hpzuGQjXEY8yobX0Br3DjGADqaM3iJiaD4GB73lZtd2w2jAsy3PDfvEE_dd9SalGA90WLoSUwkEObFxqufj2vnMVuiH1UwUnMawuVGfZPzZ7Wtoe9K4sq0E7qYiND5lgz0tyDnP7FWyd_wHEwjan_AhabgUJA0w5XlUq7AnjHe-NTrCzU_ZTJ6Hdvxy_uNRSOOv4fV4_MVRomqPePBTPXeeLBpjpsVVKSsKGrP3z7oAWclCm21i-9hEvyEeIN3TV71KgYDLaMtHsHZYPdo1WaKdnq49uPVgXbzCsAAWvgjKbOT62VciQVgv1ognm_22gPgxRksrOAhArSUX_LP0NLMxXDGP0TGwx218QgNW4qj6OxQZrBCO5YRl0Lb-mQVZZ2L3AQXk39gvArTnqIQ8aV9hwLeiBqq1qZU7Q77RUHI-yMUfkH3FAy2xQS1AIn7-rM6rCXtjXVUzdjm1_6HrJkDjS20HUFsaqmKacPxlkkCFa08zxsIsuU_h9LY4VdeVHJKnvWUFWy2M6jYvKIJRuF0Dk1PCTLqbiBUmyCnr20qGe5Y8Vc9c3pvuudm6hdk6aGa3zuNOIzftPthPEoUzoG4qZ3c
       - REDIS_HOSTS=alice-redis:6379
       - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=corn domain lonely owner media grape hard rough arena knock uncover goddess cinnamon wing actress spring dizzy skill alter pistol funny bind rapid soap
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"] # FIXME
+      test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
@@ -243,11 +271,92 @@ services:
       - alice
     restart: always
 
+  alice-privacy:
+    image: provide/privacy
+    container_name: alice-privacy
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-privacy-consumer
+      - alice-redis
+      - alice-vault
+    environment:
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=privacy_dev
+      - DATABASE_USER=privacy
+      - DATABASE_PASSWORD=privacy
+      - DATABASE_SUPERUSER=prvd
+      - DATABASE_SUPERUSER_PASSWORD=prvdp455
+      - IDENT_API_HOST=alice-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=alice-privacy
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - PORT=8080
+      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-privacy:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-privacy
+    networks:
+      - alice
+    ports:
+      - 8084:8080
+    restart: always
+
+  alice-privacy-consumer:
+    image: provide/privacy
+    entrypoint: ./ops/run_consumer.sh
+    container_name: alice-privacy-consumer
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+      - alice-vault
+    environment:
+      - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=privacy_dev
+      - DATABASE_USER=privacy
+      - DATABASE_PASSWORD=privacy
+      - DATABASE_SUPERUSER=prvd
+      - DATABASE_SUPERUSER_PASSWORD=prvdp455
+      - IDENT_API_HOST=alice-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=alice-privacy-consumer
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-privacy:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-privacy-consumer
+    networks:
+      - alice
+    restart: always
+
   alice-statsdaemon:
     image: provide/nchain
     entrypoint: ./ops/run_statsdaemon.sh
     container_name: alice-statsdaemon
     depends_on:
+      - alice-ident
       - alice-nats-streaming
       - alice-postgres
       - alice-redis
@@ -256,14 +365,21 @@ services:
       - DATABASE_NAME=nchain_dev
       - DATABASE_USER=nchain
       - DATABASE_PASSWORD=nchain
+      - IDENT_API_HOST=alice-ident:8080
+      - IDENT_API_SCHEME=http
       - LOG_LEVEL=DEBUG
       - NATS_CLIENT_PREFIX=statsdaemon
       - NATS_URL=nats://alice-nats:4222
       - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - PAYMENTS_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImU2OmY3OmQ1OjI0OmUyOjU5OjA2OjJiOmJjOmEyOjhjOjM1OjlkOmNhOjBhOjg3IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjAwNzA5Njg3LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiJkMDIzM2JlZC1iMThkLTRmNGEtODNlYS02MjBmYjdjYTY0NWMiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4wYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJuZXR3b3JrLiouY29ubmVjdG9yLioiLCJuZXR3b3JrLiouc3RhdHVzIiwicGxhdGZvcm0uXHUwMDNlIl19fX0sInBydmQiOnsiYXBwbGljYXRpb25faWQiOiIwYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJleHRlbmRlZCI6eyJwZXJtaXNzaW9ucyI6eyIqIjo1MTB9fSwicGVybWlzc2lvbnMiOjUxMH0sInN1YiI6ImFwcGxpY2F0aW9uOjBjNWE5ZmViLTE2MGMtNGZlMS05MTBlLTE4NzQyZjg2NGJjZSJ9.SUd50x0g6opm2oU9zFMu6rLpc-22WeEi50OByzluBsoV1fCN1INzqHnCJAMLC2myXIDRKaP1Q-MZVAw97hpzuGQjXEY8yobX0Br3DjGADqaM3iJiaD4GB73lZtd2w2jAsy3PDfvEE_dd9SalGA90WLoSUwkEObFxqufj2vnMVuiH1UwUnMawuVGfZPzZ7Wtoe9K4sq0E7qYiND5lgz0tyDnP7FWyd_wHEwjan_AhabgUJA0w5XlUq7AnjHe-NTrCzU_ZTJ6Hdvxy_uNRSOOv4fV4_MVRomqPePBTPXeeLBpjpsVVKSsKGrP3z7oAWclCm21i-9hEvyEeIN3TV71KgYDLaMtHsHZYPdo1WaKdnq49uPVgXbzCsAAWvgjKbOT62VciQVgv1ognm_22gPgxRksrOAhArSUX_LP0NLMxXDGP0TGwx218QgNW4qj6OxQZrBCO5YRl0Lb-mQVZZ2L3AQXk39gvArTnqIQ8aV9hwLeiBqq1qZU7Q77RUHI-yMUfkH3FAy2xQS1AIn7-rM6rCXtjXVUzdjm1_6HrJkDjS20HUFsaqmKacPxlkkCFa08zxsIsuU_h9LY4VdeVHJKnvWUFWy2M6jYvKIJRuF0Dk1PCTLqbiBUmyCnr20qGe5Y8Vc9c3pvuudm6hdk6aGa3zuNOIzftPthPEoUzoG4qZ3c
       - REDIS_HOSTS=alice-redis:6379
       - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=corn domain lonely owner media grape hard rough arena knock uncover goddess cinnamon wing actress spring dizzy skill alter pistol funny bind rapid soap
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"] # FIXME
+      test: ["CMD", "curl", "-f", "http://alice-nchain:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
@@ -285,6 +401,7 @@ services:
       - DATABASE_PASSWORD=vault
       - LOG_LEVEL=DEBUG
       - PORT=8080
+      - SEAL_UNSEAL_VALIDATION_HASH=0x05598175ac56c919ca39be16fdbb4335f755e53c27aca03717dc1b89e206aad1
       - SYSLOG_ENDPOINT=splunk:8514
     healthcheck:
       test: ["CMD", "curl", "-f", "http://alice-vault:8080/status"]
@@ -299,35 +416,177 @@ services:
       - 8082:8080
     restart: always
 
-  alice-nethermind:
-    image: provide/nethermind
-    container_name: alice-nethermind
+  alice-proxy:
+    image: provide/baseline
+    container_name: alice-proxy
+    entrypoint: ./ops/run_api.sh
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+      - alice-privacy
     environment:
-      - NETHERMIND_CONFIG=baseline
-      - NETHERMIND_INITCONFIG_STATICNODESPATH=Data/static-nodes-baseline-hosts.json
-      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
-      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
-      - NETHERMIND_JSONRPCCONFIG_PORT=8522
-      - NETHERMIND_KEYSTORECONFIG_TESTNODEKEY=020102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f
-      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=30222
-      - NETHERMIND_NETWORKCONFIG_P2PPORT=30222
-      - NETHERMIND_SYNCCONFIG_FASTSYNC=false
+      - BASELINE_ORGANIZATION_ADDRESS=
+      - BASELINE_REGISTRY_CONTRACT_ADDRESS=
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=providibright_dev
+      - DATABASE_USER=providibright
+      - DATABASE_PASSWORD=providibright
+      - IDENT_API_HOST=alice-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=alice-proxy
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - NCHAIN_API_HOST=alice-nchain:8080
+      - NCHAIN_API_SCHEME=http
+      - NCHAIN_BASELINE_NETWORK_ID=
+      - PRIVACY_API_HOST=alice-privacy:8080
+      - PRIVACY_API_SCHEME=http
+      - PROVIDE_ORGANIZATION_ID=
+      - PROVIDE_ORGANIZATION_REFRESH_TOKEN=
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+      - REDIS_HOSTS=alice-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
     healthcheck:
-      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:8522"]
+      test: ["CMD", "curl", "-f", "http://alice-proxy:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
       start_period: 10s
-    hostname: alice-nethermind
+    hostname: alice-proxy
     networks:
       - alice
-      - bob
     ports:
-      - 8522:8522
-      - 30222:30222
+      - 8088:8080
     restart: always
+
+  alice-proxy-consumer:
+    image: provide/baseline
+    container_name: alice-proxy-consumer
+    entrypoint: ./ops/run_consumer.sh
+    depends_on:
+      - alice-nats-streaming
+      - alice-postgres
+      - alice-redis
+    environment:
+      - BASELINE_ORGANIZATION_ADDRESS=
+      - BASELINE_REGISTRY_CONTRACT_ADDRESS=
+      - DATABASE_HOST=alice-postgres
+      - DATABASE_NAME=providibright_dev
+      - DATABASE_USER=providibright
+      - DATABASE_PASSWORD=providibright
+      - IDENT_API_HOST=alice-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=alice-proxy
+      - NATS_URL=nats://alice-nats:4222
+      - NATS_STREAMING_URL=nats://alice-nats-streaming:4222
+      - NCHAIN_API_HOST=alice-nchain:8080
+      - NCHAIN_API_SCHEME=http
+      - NCHAIN_BASELINE_NETWORK_ID=
+      - PRIVACY_API_HOST=alice-privacy:8080
+      - PRIVACY_API_SCHEME=http
+      - PROVIDE_ORGANIZATION_ID=
+      - PROVIDE_ORGANIZATION_REFRESH_TOKEN=
+      - VAULT_API_HOST=alice-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+      - REDIS_HOSTS=alice-redis:6379
+      - SYSLOG_ENDPOINT=splunk:8514
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://alice-proxy:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: alice-proxy-consumer
+    networks:
+      - alice
+    restart: always
+
+  # splunk stack
+
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk
+    hostname: splunk
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+      - SPLUNK_PASSWORD=changeme
+      - SPLUNK_APPS_URL=https://github.com/splunk/ethereum-basics/releases/download/latest/ethereum-basics.tgz
+    expose:
+      - 8000
+      - 8090
+      - 8514
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+      interval: 5s
+      timeout: 5s
+      retries: 2
+    ports:
+      - 8000:8000
+      - 8090:8088
+      - 8514:8514
     volumes:
-      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
+      - splunk-var:/opt/splunk/var
+      - splunk-etc:/opt/splunk/etc
+      - ./splunk-config.yml:/tmp/defaults/default.yml
+      - ./dashboards:/opt/splunk/etc/apps/search/local/data/ui/views/
+    networks:
+      - alice
+
+  alice-ethlogger:
+    container_name: alice-ethlogger
+    image: splunkdlt/ethlogger:latest
+    environment:
+      - ETH_RPC_URL=http://kovan.poa.network:8888
+      - NETWORK_NAME=ropsten
+      - START_AT_BLOCK=latest
+      - SPLUNK_HEC_URL=https://splunk:8088
+      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+      - SPLUNK_EVENTS_INDEX=main
+      - SPLUNK_METRICS_INDEX=eth_metrics
+      - SPLUNK_INTERNAL_INDEX=eth_metrics
+      - SPLUNK_HEC_REJECT_INVALID_CERTS=false
+      - ABI_DIR=/app/abis
+      - COLLECT_PENDING_TX=true
+      - COLLECT_PEER_INFO=true
+      - DEBUG=ethlogger:abi:*
+    depends_on:
+      - splunk
+    restart: unless-stopped
+    hostname: alice-ethlogger
+    volumes:
+      - ./abis:/app/abis:ro
+      - ./ops/splunk/alice-ethlogger:/app
+    networks:
+      - alice
+    logging: *splunk-logging
+
+  cadvisor:
+    image: google/cadvisor:latest
+    command:
+      - --storage_driver=statsd
+      - --storage_driver_host=splunk:8125
+      - --docker_only=true
+    depends_on:
+      - splunk
+    user: root
+    hostname: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - alice
+    logging: *splunk-logging
 
   # bob
 
@@ -338,7 +597,6 @@ services:
       - POSTGRES_DB=prvd
       - POSTGRES_USER=prvd
       - POSTGRES_PASSWORD=prvdp455
-      - SYSLOG_ENDPOINT=splunk:8514
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "prvd", "-d", "prvd"]
       interval: 1m
@@ -371,7 +629,7 @@ services:
   bob-nats:
     image: provide/nats-server
     container_name: bob-provide-nats
-    command: ["-auth", "testtoken", "-p", "4222", "--remote_syslog", "udp://splunk:8514", "-D", "-V"]
+    command: ["-auth", "testtoken", "-p", "4222", "-D", "-V"]
     environment:
       JWT_SIGNER_PUBLIC_KEY: |-
         -----BEGIN PUBLIC KEY-----
@@ -389,7 +647,7 @@ services:
         PUl1cxrvY7BHh4obNa6Bf8ECAwEAAQ==
         -----END PUBLIC KEY-----
     healthcheck:
-      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:4224"]
+      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:4222"]
       interval: 1m
       timeout: 1s
       retries: 2
@@ -410,8 +668,6 @@ services:
     container_name: bob-nats-streaming
     depends_on:
       - bob-nats
-    environment:
-      - SYSLOG_ENDPOINT=splunk:8514
     healthcheck:
       test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:4222"]
       interval: 1m
@@ -432,6 +688,7 @@ services:
       - bob-nats-streaming
       - bob-postgres
       - bob-redis
+      - bob-vault
     environment:
       - DATABASE_HOST=bob-postgres
       - DATABASE_NAME=ident_dev
@@ -443,7 +700,10 @@ services:
       - REDIS_HOSTS=bob-redis:6379
       - LOG_LEVEL=DEBUG
       - PORT=8080
-      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
     healthcheck:
       test: ["CMD", "curl", "-f", "http://bob-ident:8080/status"]
       interval: 1m
@@ -465,6 +725,7 @@ services:
       - bob-nats-streaming
       - bob-postgres
       - bob-redis
+      - bob-vault
     environment:
       - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
       - DATABASE_HOST=bob-postgres
@@ -475,12 +736,15 @@ services:
       - NATS_CLIENT_PREFIX=bob-ident-consumer
       - NATS_URL=nats://bob-nats:4222
       - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - NCHAIN_API_HOST=bob-nchain:8080
+      - NCHAIN_API_SCHEME=http
       - REDIS_HOSTS=bob-redis:6379
-      - SYSLOG_ENDPOINT=splunk:8514
-      - VAULT_API_SCHEME=http
       - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://bob-ident:8080/status"] # FIXME
+      test: ["CMD", "curl", "-f", "http://bob-ident:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
@@ -494,6 +758,7 @@ services:
     image: provide/nchain
     container_name: bob-nchain
     depends_on:
+      - bob-ident
       - bob-nats-streaming
       - bob-postgres
       - bob-redis
@@ -502,13 +767,19 @@ services:
       - DATABASE_NAME=nchain_dev
       - DATABASE_USER=nchain
       - DATABASE_PASSWORD=nchain
+      - IDENT_API_HOST=bob-ident:8080
+      - IDENT_API_SCHEME=http
       - LOG_LEVEL=DEBUG
       - NATS_CLIENT_PREFIX=bob-nchain
       - NATS_URL=nats://bob-nats:4222
       - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - PAYMENTS_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImU2OmY3OmQ1OjI0OmUyOjU5OjA2OjJiOmJjOmEyOjhjOjM1OjlkOmNhOjBhOjg3IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjAwNzA5NzU0LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiJjN2I2YzI2ZS00OTkwLTQ4YWYtYmMwYy05YWRiY2E5ZmRmNzYiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4wMTU1NGUyMi0zZDdhLTQ0YTMtOWM2NS02YmNhYmFhMDhjMzgiLCJuZXR3b3JrLiouY29ubmVjdG9yLioiLCJuZXR3b3JrLiouc3RhdHVzIiwicGxhdGZvcm0uXHUwMDNlIl19fX0sInBydmQiOnsiYXBwbGljYXRpb25faWQiOiIwMTU1NGUyMi0zZDdhLTQ0YTMtOWM2NS02YmNhYmFhMDhjMzgiLCJleHRlbmRlZCI6eyJwZXJtaXNzaW9ucyI6eyIqIjo1MTB9fSwicGVybWlzc2lvbnMiOjUxMH0sInN1YiI6ImFwcGxpY2F0aW9uOjAxNTU0ZTIyLTNkN2EtNDRhMy05YzY1LTZiY2FiYWEwOGMzOCJ9.iPYYSS0hHNYLUXcgpBfQbo6goMGDHF5Oxv1OvkB-WAzRgZSAm2HFroOUsmPlCQwO5eNeTfMqRaQMDdl6idTCip99y-zYTu8ys7dahyk4P1lhh4BB8vTCl3AHQuyUTGloMrY2JytpkmXMZTsxu-UhQxaaQN0IlSotSIFAYPT3jHH5nYy2MJbcfxePt8xKmXzwvpjTEVJRmUfAfEXjJF34S3hAuw9S7WncKucZfuP1WwP65h53HbLB69DR6KFZ76eiRavke5RpT40r9UKC6zPP-UZhTAuWQjOSmBhkd_IUg4T2a8r4W9CJT6aLgtwE0i1OUrPDVj_EzQV9tsjlwIOv5y9r_p-sfdxXdHFfoT8nAs5uIcWTw45J2Ycc0b4vqs-sYDr2qn7TS5DvJbPQSnRBS9YZ8CJq9mFpc5GjunCzEqO6JkvEWaN1mqPJbcvMGmLRQt5zA-2D0fFq1mvIUCUcg3EQ5J5lAZqudGf9mnYf4xRIMacCssF5VsP36xXg7pnscqh3u3JdQ-Fon3nB5vbIXn2fxaJjYl4ggNr-IgLxK7_h9KlDkiv7I7EKWGl2Np0q3-mVvuTIk7M-GqT3Dx9TtpR6MsK6EX0frUH3bZH8RHBHnxx67oxNMamviT-XUNudUU7Wan1PfnaPSsqfrn6OT5Abep-BbewKJn3ErY0Z-oU
       - PORT=8080
       - REDIS_HOSTS=bob-redis:6379
-      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
     healthcheck:
       test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"]
       interval: 1m
@@ -527,6 +798,7 @@ services:
     entrypoint: ./ops/run_consumer.sh
     container_name: bob-nchain-consumer
     depends_on:
+      - bob-ident
       - bob-nats-streaming
       - bob-postgres
       - bob-redis
@@ -536,16 +808,21 @@ services:
       - DATABASE_NAME=nchain_dev
       - DATABASE_USER=nchain
       - DATABASE_PASSWORD=nchain
+      - IDENT_API_HOST=bob-ident:8080
+      - IDENT_API_SCHEME=http
       - LOG_LEVEL=DEBUG
       - NATS_CLIENT_PREFIX=bob-nchain-consumer
       - NATS_URL=nats://bob-nats:4222
       - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
       - NATS_TOKEN=testtoken
-      - PORT=8080
+      - PAYMENTS_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImU2OmY3OmQ1OjI0OmUyOjU5OjA2OjJiOmJjOmEyOjhjOjM1OjlkOmNhOjBhOjg3IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjAwNzA5NzU0LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiJjN2I2YzI2ZS00OTkwLTQ4YWYtYmMwYy05YWRiY2E5ZmRmNzYiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4wMTU1NGUyMi0zZDdhLTQ0YTMtOWM2NS02YmNhYmFhMDhjMzgiLCJuZXR3b3JrLiouY29ubmVjdG9yLioiLCJuZXR3b3JrLiouc3RhdHVzIiwicGxhdGZvcm0uXHUwMDNlIl19fX0sInBydmQiOnsiYXBwbGljYXRpb25faWQiOiIwMTU1NGUyMi0zZDdhLTQ0YTMtOWM2NS02YmNhYmFhMDhjMzgiLCJleHRlbmRlZCI6eyJwZXJtaXNzaW9ucyI6eyIqIjo1MTB9fSwicGVybWlzc2lvbnMiOjUxMH0sInN1YiI6ImFwcGxpY2F0aW9uOjAxNTU0ZTIyLTNkN2EtNDRhMy05YzY1LTZiY2FiYWEwOGMzOCJ9.iPYYSS0hHNYLUXcgpBfQbo6goMGDHF5Oxv1OvkB-WAzRgZSAm2HFroOUsmPlCQwO5eNeTfMqRaQMDdl6idTCip99y-zYTu8ys7dahyk4P1lhh4BB8vTCl3AHQuyUTGloMrY2JytpkmXMZTsxu-UhQxaaQN0IlSotSIFAYPT3jHH5nYy2MJbcfxePt8xKmXzwvpjTEVJRmUfAfEXjJF34S3hAuw9S7WncKucZfuP1WwP65h53HbLB69DR6KFZ76eiRavke5RpT40r9UKC6zPP-UZhTAuWQjOSmBhkd_IUg4T2a8r4W9CJT6aLgtwE0i1OUrPDVj_EzQV9tsjlwIOv5y9r_p-sfdxXdHFfoT8nAs5uIcWTw45J2Ycc0b4vqs-sYDr2qn7TS5DvJbPQSnRBS9YZ8CJq9mFpc5GjunCzEqO6JkvEWaN1mqPJbcvMGmLRQt5zA-2D0fFq1mvIUCUcg3EQ5J5lAZqudGf9mnYf4xRIMacCssF5VsP36xXg7pnscqh3u3JdQ-Fon3nB5vbIXn2fxaJjYl4ggNr-IgLxK7_h9KlDkiv7I7EKWGl2Np0q3-mVvuTIk7M-GqT3Dx9TtpR6MsK6EX0frUH3bZH8RHBHnxx67oxNMamviT-XUNudUU7Wan1PfnaPSsqfrn6OT5Abep-BbewKJn3ErY0Z-oU
       - REDIS_HOSTS=bob-redis:6379
-      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"] # FIXME
+      test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
@@ -555,11 +832,90 @@ services:
       - bob
     restart: always
 
+  bob-privacy:
+    image: provide/privacy
+    container_name: bob-privacy
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-privacy-consumer
+      - bob-redis
+      - bob-vault
+    environment:
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=privacy_dev
+      - DATABASE_USER=privacy
+      - DATABASE_PASSWORD=privacy
+      - DATABASE_SUPERUSER=prvd
+      - DATABASE_SUPERUSER_PASSWORD=prvdp455
+      - IDENT_API_HOST=bob-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=bob-privacy
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - PORT=8080
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-privacy:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-privacy
+    networks:
+      - bob
+    ports:
+      - 8087:8080
+    restart: always
+
+  bob-privacy-consumer:
+    image: provide/privacy
+    entrypoint: ./ops/run_consumer.sh
+    container_name: bob-privacy-consumer
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
+      - bob-vault
+    environment:
+      - CONSUME_NATS_STREAMING_SUBSCRIPTIONS=true
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=privacy_dev
+      - DATABASE_USER=privacy
+      - DATABASE_PASSWORD=privacy
+      - DATABASE_SUPERUSER=prvd
+      - DATABASE_SUPERUSER_PASSWORD=prvdp455
+      - IDENT_API_HOST=bob-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=bob-privacy-consumer
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://bob-privacy:8080/status"]
+      interval: 1m
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    hostname: bob-privacy-consumer
+    networks:
+      - bob
+    restart: always
+
   bob-statsdaemon:
     image: provide/nchain
     entrypoint: ./ops/run_statsdaemon.sh
     container_name: bob-statsdaemon
     depends_on:
+      - bob-ident
       - bob-nats-streaming
       - bob-postgres
       - bob-redis
@@ -568,14 +924,20 @@ services:
       - DATABASE_NAME=nchain_dev
       - DATABASE_USER=nchain
       - DATABASE_PASSWORD=nchain
+      - IDENT_API_HOST=bob-ident:8080
+      - IDENT_API_SCHEME=http
       - LOG_LEVEL=DEBUG
       - NATS_CLIENT_PREFIX=statsdaemon
       - NATS_URL=nats://bob-nats:4222
       - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - PAYMENTS_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImU2OmY3OmQ1OjI0OmUyOjU5OjA2OjJiOmJjOmEyOjhjOjM1OjlkOmNhOjBhOjg3IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjAwNzA5Njg3LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiJkMDIzM2JlZC1iMThkLTRmNGEtODNlYS02MjBmYjdjYTY0NWMiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4wYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJuZXR3b3JrLiouY29ubmVjdG9yLioiLCJuZXR3b3JrLiouc3RhdHVzIiwicGxhdGZvcm0uXHUwMDNlIl19fX0sInBydmQiOnsiYXBwbGljYXRpb25faWQiOiIwYzVhOWZlYi0xNjBjLTRmZTEtOTEwZS0xODc0MmY4NjRiY2UiLCJleHRlbmRlZCI6eyJwZXJtaXNzaW9ucyI6eyIqIjo1MTB9fSwicGVybWlzc2lvbnMiOjUxMH0sInN1YiI6ImFwcGxpY2F0aW9uOjBjNWE5ZmViLTE2MGMtNGZlMS05MTBlLTE4NzQyZjg2NGJjZSJ9.SUd50x0g6opm2oU9zFMu6rLpc-22WeEi50OByzluBsoV1fCN1INzqHnCJAMLC2myXIDRKaP1Q-MZVAw97hpzuGQjXEY8yobX0Br3DjGADqaM3iJiaD4GB73lZtd2w2jAsy3PDfvEE_dd9SalGA90WLoSUwkEObFxqufj2vnMVuiH1UwUnMawuVGfZPzZ7Wtoe9K4sq0E7qYiND5lgz0tyDnP7FWyd_wHEwjan_AhabgUJA0w5XlUq7AnjHe-NTrCzU_ZTJ6Hdvxy_uNRSOOv4fV4_MVRomqPePBTPXeeLBpjpsVVKSsKGrP3z7oAWclCm21i-9hEvyEeIN3TV71KgYDLaMtHsHZYPdo1WaKdnq49uPVgXbzCsAAWvgjKbOT62VciQVgv1ognm_22gPgxRksrOAhArSUX_LP0NLMxXDGP0TGwx218QgNW4qj6OxQZrBCO5YRl0Lb-mQVZZ2L3AQXk39gvArTnqIQ8aV9hwLeiBqq1qZU7Q77RUHI-yMUfkH3FAy2xQS1AIn7-rM6rCXtjXVUzdjm1_6HrJkDjS20HUFsaqmKacPxlkkCFa08zxsIsuU_h9LY4VdeVHJKnvWUFWy2M6jYvKIJRuF0Dk1PCTLqbiBUmyCnr20qGe5Y8Vc9c3pvuudm6hdk6aGa3zuNOIzftPthPEoUzoG4qZ3c
       - REDIS_HOSTS=bob-redis:6379
-      - SYSLOG_ENDPOINT=splunk:8514
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"] # FIXME
+      test: ["CMD", "curl", "-f", "http://bob-nchain:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
@@ -597,7 +959,7 @@ services:
       - DATABASE_PASSWORD=vault
       - LOG_LEVEL=DEBUG
       - PORT=8080
-      - SYSLOG_ENDPOINT=splunk:8514
+      - SEAL_UNSEAL_VALIDATION_HASH=0x1c1381fd075f1ee3d42799bb8da0602a2afb9ef4b492bf1eae72399ecc81b0f0
     healthcheck:
       test: ["CMD", "curl", "-f", "http://bob-vault:8080/status"]
       interval: 1m
@@ -611,147 +973,96 @@ services:
       - 8083:8080
     restart: always
 
-  bob-nethermind:
-    image: provide/nethermind
-    container_name: bob-nethermind
+  bob-proxy:
+    image: provide/baseline
+    container_name: bob-proxy
+    entrypoint: ./ops/run_api.sh
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
+      - bob-privacy
     environment:
-      - NETHERMIND_CONFIG=baseline
-      - NETHERMIND_INITCONFIG_STATICNODESPATH=Data/static-nodes-baseline-hosts.json
-      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
-      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
-      - NETHERMIND_JSONRPCCONFIG_PORT=8511
-      - NETHERMIND_KEYSTORECONFIG_TESTNODEKEY=120102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f
-      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=30111
-      - NETHERMIND_NETWORKCONFIG_P2PPORT=30111
-      - NETHERMIND_SYNCCONFIG_FASTSYNC=false
+      - BASELINE_ORGANIZATION_ADDRESS=
+      - BASELINE_REGISTRY_CONTRACT_ADDRESS=
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=providibright_dev
+      - DATABASE_USER=providibright
+      - DATABASE_PASSWORD=providibright
+      - IDENT_API_HOST=bob-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=bob-proxy
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - NCHAIN_API_HOST=bob-nchain:8080
+      - NCHAIN_API_SCHEME=http
+      - NCHAIN_BASELINE_NETWORK_ID=
+      - PRIVACY_API_HOST=bob-privacy:8080
+      - PRIVACY_API_SCHEME=http
+      - PROVIDE_ORGANIZATION_ID=
+      - PROVIDE_ORGANIZATION_REFRESH_TOKEN=
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+      - REDIS_HOSTS=bob-redis:6379
     healthcheck:
-      test: ["CMD", "/usr/local/bin/await_tcp.sh", "localhost:8511"]
+      test: ["CMD", "curl", "-f", "http://bob-proxy:8080/status"]
       interval: 1m
       timeout: 1s
       retries: 2
       start_period: 10s
-    hostname: bob-nethermind
+    hostname: bob-proxy
     networks:
-      - alice
       - bob
     ports:
-      - 8511:8511
-      - 30111:30111
+      - 8089:8080
     restart: always
-    volumes:
-      - ./ops/await_tcp.sh:/usr/local/bin/await_tcp.sh:cached
 
-  # splunk stack
-
-  splunk:
-    image: splunk/splunk:latest
-    container_name: splunk
-    hostname: splunk
+  bob-proxy-consumer:
+    image: provide/baseline
+    container_name: bob-proxy-consumer
+    entrypoint: ./ops/run_consumer.sh
+    depends_on:
+      - bob-nats-streaming
+      - bob-postgres
+      - bob-redis
     environment:
-      - SPLUNK_START_ARGS=--accept-license
-      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
-      - SPLUNK_PASSWORD=changeme
-      - SPLUNK_APPS_URL=https://github.com/splunk/ethereum-basics/releases/download/latest/ethereum-basics.tgz
-    expose:
-      - "8000"
-      - "8088"
+      - BASELINE_ORGANIZATION_ADDRESS=
+      - BASELINE_REGISTRY_CONTRACT_ADDRESS=
+      - DATABASE_HOST=bob-postgres
+      - DATABASE_NAME=providibright_dev
+      - DATABASE_USER=providibright
+      - DATABASE_PASSWORD=providibright
+      - IDENT_API_HOST=bob-ident:8080
+      - IDENT_API_SCHEME=http
+      - LOG_LEVEL=DEBUG
+      - NATS_CLIENT_PREFIX=bob-proxy
+      - NATS_URL=nats://bob-nats:4222
+      - NATS_STREAMING_URL=nats://bob-nats-streaming:4222
+      - NCHAIN_API_HOST=bob-nchain:8080
+      - NCHAIN_API_SCHEME=http
+      - NCHAIN_BASELINE_NETWORK_ID=
+      - PRIVACY_API_HOST=bob-privacy:8080
+      - PRIVACY_API_SCHEME=http
+      - PROVIDE_ORGANIZATION_ID=
+      - PROVIDE_ORGANIZATION_REFRESH_TOKEN=
+      - VAULT_API_HOST=bob-vault:8080
+      - VAULT_API_SCHEME=http
+      - VAULT_REFRESH_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOjJlOmQ5OmUxOmI4OmEyOjM0OjM3Ojk5OjNhOjI0OmZjOmFhOmQxOmM4OjU5IiwidHlwIjoiSldUIn0.eyJhdWQiOiJodHRwczovL3Byb3ZpZGUuc2VydmljZXMvYXBpL3YxIiwiaWF0IjoxNjA1NzkxMjQ4LCJpc3MiOiJodHRwczovL2lkZW50LnByb3ZpZGUuc2VydmljZXMiLCJqdGkiOiI5YjUxNGIxNS01NTdlLTRhYWQtYTcwOC0wMTcwZTAwZWE1ZmIiLCJuYXRzIjp7InBlcm1pc3Npb25zIjp7InN1YnNjcmliZSI6eyJhbGxvdyI6WyJhcHBsaWNhdGlvbi4zNjAxNTdmOC1kNWExLTQ0NDAtOTE4Yi1mNjhiYjM5YzBkODAiLCJ1c2VyLjIzY2MwN2UwLTM4NTEtNDBkZC1iNjc1LWRmNzY4MDY3MmY3ZCIsIm5ldHdvcmsuKi5jb25uZWN0b3IuKiIsIm5ldHdvcmsuKi5zdGF0dXMiLCJwbGF0Zm9ybS5cdTAwM2UiXX19fSwicHJ2ZCI6eyJhcHBsaWNhdGlvbl9pZCI6IjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCIsImV4dGVuZGVkIjp7InBlcm1pc3Npb25zIjp7IioiOjUxMH19LCJwZXJtaXNzaW9ucyI6NTEwLCJ1c2VyX2lkIjoiMjNjYzA3ZTAtMzg1MS00MGRkLWI2NzUtZGY3NjgwNjcyZjdkIn0sInN1YiI6ImFwcGxpY2F0aW9uOjM2MDE1N2Y4LWQ1YTEtNDQ0MC05MThiLWY2OGJiMzljMGQ4MCJ9.SUh84MKBNstdu3KFu1zEAQq03xbPw1D0lLXeogz1HfBJy77bIGf7HLvCuc6bjkh0xj3cEuEus1dC1Dj3BvlZoSXsvz_biTzSapkXzJjpkwOL6qkYDmqTPZvXwqmk-mUNrHTPkqdiIJL7xA46tzHW3E_hjSA9HjEk1kXjPdJQ6_ifkgWNoAaSD--kudIrhZ7vLnfy0H1JEAOsXzSAMoc5_pNG2n79m0ywvb_4l9BqdsHW8N3xSQOFjcp9gD_tqo6ffug3pkpoy-RSguM_OaMR2lj_CHhYxAt0phtjUceDD3K1h5iZ38kSl7izhOdULMmGBhVpBMoSy6_R6ZzpCL3pj8FcReX9RXR5oYpm8PDtlmWqblQzjwY00-uYLfOX0_iS4MGfEsjadZPfTmJLcOTYC7H4PL9ZRu_XtMDUrGBQQz5b_ad2ZzMXbBNeU6vbxVKDG8VFKWOHAemqHTcvuOAsOCLIqOu-eJpZHlXbx-FXPTYledd-GBDe7IjaC9ll_JK3utCOnCq0qUs6lnXIrQ_Sp1LcTKJJ7aY5f9TxeoAuL-ghDbQ3Xkw6huKyPCz2evOwVLwrB9ZRMlQXgmTnB1OeQvWii1WbmkyV1Zhbz_RPB8ckK7_mFxuPvsXK8wTFiWFmj96sRX470kV-ooSfM5CzKZhSLqgyyaUNC0VaCPq0uuE
+      - VAULT_SEAL_UNSEAL_KEY=forest step weird object extend boat ball unit canoe pull render monkey drink monitor behind supply brush frown alone rural minute level host clock
+      - REDIS_HOSTS=bob-redis:6379
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8000']
-      interval: 5s
-      timeout: 5s
+      test: ["CMD", "curl", "-f", "http://bob-proxy:8080/status"]
+      interval: 1m
+      timeout: 1s
       retries: 2
-    ports:
-      - "8000:8000"
-      - "8088:8088"
-      - "8514:8514"
-    volumes:
-      - splunk-var:/opt/splunk/var
-      - splunk-etc:/opt/splunk/etc
-      - ./ops/splunk/splunk-config.yml:/tmp/defaults/default.yml
-      - ./ops/splunk/dashboards:/opt/splunk/etc/apps/search/local/data/ui/views/
+      start_period: 10s
+    hostname: bob-proxy-consumer
     networks:
-      - alice
       - bob
-
-  alice-ethlogger:
-    container_name: alice-ethlogger
-    image: splunkdlt/ethlogger:latest
-    environment:
-      - ETH_RPC_URL=http://alice-nethermind:8522
-      - NETWORK_NAME=ropsten
-      - START_AT_BLOCK=latest
-      - SPLUNK_HEC_URL=https://splunk:8088
-      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
-      - SPLUNK_EVENTS_INDEX=main
-      - SPLUNK_METRICS_INDEX=eth_metrics
-      - SPLUNK_INTERNAL_INDEX=eth_metrics
-      - SPLUNK_HEC_REJECT_INVALID_CERTS=false
-      - ABI_DIR=/app/abis
-      - COLLECT_PENDING_TX=true
-      - COLLECT_PEER_INFO=true
-      - DEBUG=ethlogger:abi:*
-    depends_on:
-      - splunk
-      - alice-nethermind
-    restart: unless-stopped
-    hostname: alice-ethlogger
-    volumes:
-      - ./ops/splunk/abis:/app/abis
-      - ./ops/splunk:/app
-    networks:
-      - alice
-      - bob
-    logging: *splunk-logging
-
-  bob-ethlogger:
-    container_name: bob-ethlogger
-    image: splunkdlt/ethlogger:latest
-    environment:
-      - ETH_RPC_URL=http://bob-nethermind:8511
-      - NETWORK_NAME=ropsten
-      - START_AT_BLOCK=latest
-      - SPLUNK_HEC_URL=https://splunk:8088
-      - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
-      - SPLUNK_EVENTS_INDEX=main
-      - SPLUNK_METRICS_INDEX=eth_metrics
-      - SPLUNK_INTERNAL_INDEX=eth_metrics
-      - SPLUNK_HEC_REJECT_INVALID_CERTS=false
-      - ABI_DIR=/app/abis
-      - COLLECT_PENDING_TX=true
-      - COLLECT_PEER_INFO=true
-      - DEBUG=ethlogger:abi:*
-    depends_on:
-      - splunk
-      - bob-nethermind
-    restart: unless-stopped
-    hostname: bob-ethlogger
-    volumes:
-      - ./ops/splunk/abis:/app/abis
-      - ./ops/splunk:/app
-    networks:
-      - alice
-      - bob
-    logging: *splunk-logging
-
-  cadvisor:
-    image: google/cadvisor:latest
-    command:
-      - --storage_driver=statsd
-      - --storage_driver_host=splunk:8125
-      - --docker_only=true
-    depends_on:
-      - splunk
-    user: root
-    hostname: cadvisor
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    networks:
-      - alice
-      - bob
-    logging: *splunk-logging
+    restart: always
 
 networks:
   alice:
